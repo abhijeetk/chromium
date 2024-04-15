@@ -330,6 +330,7 @@ SessionsGetDevicesFunction::CreateWindowModel(
       state = api::windows::WINDOW_STATE_NORMAL;
       break;
     case ui::SHOW_STATE_MINIMIZED:
+    case ui::SHOW_STATE_HIDDEN:
       state = api::windows::WINDOW_STATE_MINIMIZED;
       break;
     case ui::SHOW_STATE_MAXIMIZED:

@@ -29,7 +29,8 @@ enum WindowShowState {
   SHOW_STATE_MAXIMIZED = 3,
   SHOW_STATE_INACTIVE = 4,  // Views only, not persisted.
   SHOW_STATE_FULLSCREEN = 5,
-  SHOW_STATE_END = 6  // The end of show state enum.
+  SHOW_STATE_HIDDEN = 6,  // Views and MacOS only.
+  SHOW_STATE_END = 7      // The end of show state enum.
 };
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS)

@@ -1,0 +1,26 @@
+--- ui/views/widget/widget.cc
++++ ui/views/widget/widget.cc
+@@ -399,7 +399,8 @@ void Widget::Init(InitParams params) {
+   }
+ 
+   params.child |= (params.type == InitParams::TYPE_CONTROL);
+-  is_top_level_ = !params.child;
++  is_top_level_ = !params.child ||
++                  params.parent_widget != gfx::kNullAcceleratedWidget;
+   is_headless_ = params.ShouldInitAsHeadless();
+ 
+   if (params.opacity == views::Widget::InitParams::WindowOpacity::kInferred &&
+@@ -518,7 +524,12 @@ void Widget::Init(InitParams params) {
+   } else if (delegate) {
+     SetContentsView(delegate->TransferOwnershipOfContentsView());
+     if (should_set_initial_bounds) {
+-      SetInitialBoundsForFramelessWindow(bounds);
++      if (params.parent_widget != gfx::kNullAcceleratedWidget) {
++        // Set the bounds directly instead of applying an inset.
++        SetBounds(bounds);
++      } else {
++        SetInitialBoundsForFramelessWindow(bounds);
++      }
+     }
+   }
+ 

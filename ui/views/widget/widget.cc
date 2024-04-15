@@ -368,7 +368,8 @@ void Widget::Init(InitParams params) {
   }
 
   params.child |= (params.type == InitParams::TYPE_CONTROL);
-  is_top_level_ = !params.child;
+  is_top_level_ =
+      !params.child || params.parent_widget != gfx::kNullAcceleratedWidget;
 
   if (params.opacity == views::Widget::InitParams::WindowOpacity::kInferred &&
       params.type != views::Widget::InitParams::TYPE_WINDOW) {
@@ -468,13 +469,23 @@ void Widget::Init(InitParams params) {
 
     if (show_state == ui::SHOW_STATE_MAXIMIZED) {
       Maximize();
+      saved_show_state_ = ui::SHOW_STATE_MAXIMIZED;
     } else if (show_state == ui::SHOW_STATE_MINIMIZED) {
       Minimize();
       saved_show_state_ = ui::SHOW_STATE_MINIMIZED;
+    } else if (show_state == ui::SHOW_STATE_FULLSCREEN) {
+      SetFullscreen(true);
+    } else if (show_state == ui::SHOW_STATE_HIDDEN) {
+      Hide();
     }
   } else if (delegate) {
     SetContentsView(delegate->TransferOwnershipOfContentsView());
-    SetInitialBoundsForFramelessWindow(bounds);
+    if (params.parent_widget != gfx::kNullAcceleratedWidget) {
+      // Set the bounds directly instead of applying an inset.
+      SetBounds(bounds);
+    } else {
+      SetInitialBoundsForFramelessWindow(bounds);
+    }
   }
 
   if (base::FeatureList::IsEnabled(features::kWidgetLayering)) {
@@ -1611,10 +1622,18 @@ void Widget::OnNativeWidgetParentChanged(gfx::NativeView parent) {
 }
 
 gfx::Size Widget::GetMinimumSize() const {
+  gfx::Size size;
+  if (widget_delegate_->MaybeGetMinimumSize(&size)) {
+    return size;
+  }
   return non_client_view_ ? non_client_view_->GetMinimumSize() : gfx::Size();
 }
 
 gfx::Size Widget::GetMaximumSize() const {
+  gfx::Size size;
+  if (widget_delegate_->MaybeGetMaximumSize(&size)) {
+    return size;
+  }
   return non_client_view_ ? non_client_view_->GetMaximumSize() : gfx::Size();
 }
 
@@ -1853,7 +1872,8 @@ bool Widget::SetInitialFocus(ui::WindowShowState show_state) {
     return false;
   View* v = widget_delegate_->GetInitiallyFocusedView();
   if (!focus_on_creation_ || show_state == ui::SHOW_STATE_INACTIVE ||
-      show_state == ui::SHOW_STATE_MINIMIZED) {
+      show_state == ui::SHOW_STATE_MINIMIZED ||
+      show_state == ui::SHOW_STATE_HIDDEN) {
     // If not focusing the window now, tell the focus manager which view to
     // focus when the window is restored.
     if (v)

@@ -137,6 +137,13 @@ bool WidgetDelegate::ShouldCenterWindowTitleText() const {
 #endif
 }
 
+bool WidgetDelegate::MaybeGetMinimumSize(gfx::Size* size) const {
+  return false;
+}
+bool WidgetDelegate::MaybeGetMaximumSize(gfx::Size* size) const {
+  return false;
+}
+
 // TODO(ffred): refactor this method.
 bool WidgetDelegate::RotatePaneFocusFromView(View* focused_view,
                                              bool forward,
