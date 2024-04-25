@@ -34,7 +34,7 @@ class TestScreen : public display::ScreenBase, public WindowObserver {
 
   ~TestScreen() override;
 
-  WindowTreeHost* CreateHostForPrimaryDisplay();
+  WindowTreeHost* CreateHostForPrimaryDisplay(HWND parent_handle);
 
   void SetDeviceScaleFactor(float device_scale_factor, bool resize_host = true);
   void SetColorSpace(

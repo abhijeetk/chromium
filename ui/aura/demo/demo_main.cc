@@ -162,13 +162,80 @@ void RunRunLoopUntilOnHostCloseRequested(aura::WindowTreeHost* host) {
   host->RemoveObserver(&observer);
 }
 
+// Step 6: Window Procedure
+LRESULT CALLBACK WindowProc(HWND hwnd,
+                            UINT uMsg,
+                            WPARAM wParam,
+                            LPARAM lParam) {
+  switch (uMsg) {
+    case WM_SETFOCUS: {
+    }
+      return 0;
+    case WM_CREATE: {
+    }
+      return 0;
+    case WM_PAINT: {
+    }
+      return 0;
+    case WM_SHOWWINDOW: {
+    }
+      return 0;
+    case WM_CLOSE: {
+      // Input method shutdown needs to happen before thread cleanup while the
+      // sequence manager is still valid.
+      ui::ShutdownInputMethodForTesting();
+      return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    }
+    case WM_DESTROY: {
+      hwnd = nullptr;
+      PostQuitMessage(0);
+    }
+      return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    default:
+      return DefWindowProc(hwnd, uMsg, wParam, lParam);
+  }
+}
+
 int DemoMain() {
-#if BUILDFLAG(IS_OZONE)
-  ui::OzonePlatform::InitParams params;
-  params.single_process = true;
-  ui::OzonePlatform::InitializeForUI(params);
-  ui::OzonePlatform::InitializeForGPU(params);
-#endif
+  HWND hwnd = nullptr;
+
+  // Only register the class one time.
+  const std::wstring& window_class = L"MyWindowClass";
+  static bool class_registered = false;
+  if (class_registered) {
+    return 0;
+  }
+  class_registered = true;
+
+  WNDCLASSEX wcex;
+  wcex.cbSize = sizeof(WNDCLASSEX);
+  wcex.style = CS_HREDRAW | CS_VREDRAW;
+  wcex.lpfnWndProc = WindowProc;
+  wcex.cbClsExtra = 0;
+  wcex.cbWndExtra = 0;
+  wcex.hInstance = GetModuleHandle(NULL);
+  wcex.hIcon = NULL;
+  wcex.hCursor = NULL;
+  wcex.hbrBackground = NULL;
+  wcex.lpszMenuName = NULL;
+  wcex.lpszClassName = window_class.c_str();
+  wcex.hIconSm = NULL;
+
+  RegisterClassEx(&wcex);
+
+  // Create the parent window (assuming this is a Win32 application)
+  hwnd = CreateWindowEx(0, window_class.c_str(), L"TEST", WS_OVERLAPPEDWINDOW,
+                        0, 0, 1000, 1000, nullptr, nullptr,
+                        GetModuleHandle(nullptr), nullptr);
+
+  const DWORD create_window_error_parent = ::GetLastError();
+  LOG(ERROR) << "hWnd : " << hwnd
+             << "\tcreate_window_error_parent : " << create_window_error_parent;
+
+  if (!hwnd) {
+    return 0;
+  }
+
   gl::init::InitializeGLOneOff(/*gpu_preference=*/gl::GpuPreference::kDefault);
 
 #if BUILDFLAG(IS_WIN)
@@ -199,7 +266,7 @@ int DemoMain() {
       aura::TestScreen::Create(gfx::Size()));
   display::Screen::SetScreenInstance(test_screen.get());
   std::unique_ptr<aura::WindowTreeHost> host(
-      test_screen->CreateHostForPrimaryDisplay());
+      test_screen->CreateHostForPrimaryDisplay(hwnd));
   DemoWindowParentingClient window_parenting_client(host->window());
   aura::test::TestFocusClient focus_client(host->window());
 
@@ -231,14 +298,12 @@ int DemoMain() {
   window3.Show();
   window2.AddChild(&window3);
 
+  ShowWindow(hwnd, SW_SHOWNORMAL);
+  UpdateWindow(hwnd);
+
   host->Show();
 
   RunRunLoopUntilOnHostCloseRequested(host.get());
-
-  // Input method shutdown needs to happen before thread cleanup while the
-  // sequence manager is still valid.
-  ui::ShutdownInputMethodForTesting();
-
   return 0;
 }
 

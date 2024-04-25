@@ -13,6 +13,7 @@
 #include "ui/platform_window/platform_window.h"
 #include "ui/platform_window/platform_window_delegate.h"
 #include "ui/platform_window/win/win_window_export.h"
+#include "ui/platform_window/platform_window_init_properties.h"
 
 #include <windows.h>
 
@@ -23,6 +24,7 @@ class WIN_WINDOW_EXPORT WinWindow : public PlatformWindow,
                                     public gfx::WindowImpl {
  public:
   WinWindow(PlatformWindowDelegate* delegate, const gfx::Rect& bounds);
+  WinWindow(PlatformWindowDelegate* delegate, ui::PlatformWindowInitProperties* properties);
 
   WinWindow(const WinWindow&) = delete;
   WinWindow& operator=(const WinWindow&) = delete;

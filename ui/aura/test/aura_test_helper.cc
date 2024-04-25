@@ -130,7 +130,7 @@ void AuraTestHelper::SetUp() {
   if (!screen)
     display::Screen::SetScreenInstance(test_screen_.get());
 
-  host_.reset(test_screen_->CreateHostForPrimaryDisplay());
+  host_.reset(test_screen_->CreateHostForPrimaryDisplay(nullptr));
   host_->window()->SetEventTargeter(std::make_unique<WindowTargeter>());
   host_->SetBoundsInPixels(gfx::Rect(host_size));
 

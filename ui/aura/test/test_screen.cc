@@ -43,10 +43,14 @@ TestScreen::~TestScreen() {
   delete host_;
 }
 
-WindowTreeHost* TestScreen::CreateHostForPrimaryDisplay() {
+WindowTreeHost* TestScreen::CreateHostForPrimaryDisplay(HWND parent_handle) {
   DCHECK(!host_);
   ui::PlatformWindowInitProperties properties(
       gfx::Rect(GetPrimaryDisplay().GetSizeInPixel()));
+  properties.parent_widget = parent_handle;
+  properties.remove_standard_frame = true;
+  //properties.type = ui::PlatformWindowType::kPopup;
+
   host_ = WindowTreeHost::Create(std::move(properties)).release();
   // Some tests don't correctly manage window focus/activation states.
   // Makes sure InputMethod is default focused so that IME basics can work.
