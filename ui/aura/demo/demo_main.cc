@@ -224,7 +224,7 @@ int DemoMain() {
   RegisterClassEx(&wcex);
 
   // Create the parent window (assuming this is a Win32 application)
-  hwnd = CreateWindowEx(0, window_class.c_str(), L"TEST", WS_OVERLAPPEDWINDOW,
+  hwnd = CreateWindowEx(0, window_class.c_str(), L"External Window", WS_OVERLAPPEDWINDOW,
                         0, 0, 1000, 1000, nullptr, nullptr,
                         GetModuleHandle(nullptr), nullptr);
 
