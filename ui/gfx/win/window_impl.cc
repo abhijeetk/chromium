@@ -208,11 +208,22 @@ void WindowImpl::Init(HWND parent, const Rect& bounds) {
 
   ATOM atom = GetWindowClassAtom();
   auto weak_this = weak_factory_.GetWeakPtr();
-  HWND hwnd = CreateWindowEx(window_ex_style_,
+
+#if 1
+  // for external parent use case
+  HWND hwnd = CreateWindowEx(NULL,
+                             reinterpret_cast<wchar_t*>(atom), NULL,
+      WS_CHILD | WS_VISIBLE, x, y, width, height,
+                             parent, NULL, NULL, this);
+  const DWORD create_window_error = ::GetLastError();
+#else
+   // original code
+   HWND hwnd = CreateWindowEx(window_ex_style_,
                              reinterpret_cast<wchar_t*>(atom), NULL,
                              window_style_, x, y, width, height,
                              parent, NULL, NULL, this);
-  const DWORD create_window_error = ::GetLastError();
+   const DWORD create_window_error = ::GetLastError();
+#endif
 
   // First nccalcszie (during CreateWindow) for captioned windows is
   // deliberately ignored so force a second one here to get the right

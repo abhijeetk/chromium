@@ -74,7 +74,7 @@ void WindowTreeHostPlatform::CreateAndSetPlatformWindow(
   platform_window_ = ui::OzonePlatform::GetInstance()->CreatePlatformWindow(
       this, std::move(properties));
 #elif BUILDFLAG(IS_WIN)
-  platform_window_ = std::make_unique<ui::WinWindow>(this, properties.bounds);
+  platform_window_ = std::make_unique<ui::WinWindow>(this, &properties);
 #else
   NOTIMPLEMENTED();
 #endif

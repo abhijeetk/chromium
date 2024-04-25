@@ -914,7 +914,7 @@ std::string Window::GetWindowHierarchy(int depth) const {
 }
 
 void Window::PrintWindowHierarchy(int depth) const {
-  VLOG(0) << GetWindowHierarchy(depth);
+ LOG(ERROR) << GetWindowHierarchy(depth);
 }
 #endif
 
