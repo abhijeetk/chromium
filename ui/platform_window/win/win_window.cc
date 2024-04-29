@@ -46,17 +46,19 @@ gfx::Rect GetWindowBoundsForClientBounds(DWORD style,
 
 }  // namespace
 
-WinWindow::WinWindow(PlatformWindowDelegate* delegate, ui::PlatformWindowInitProperties* properties) : delegate_(delegate) {
-    CHECK(delegate_);
-    DWORD window_style = WS_OVERLAPPEDWINDOW;
-    if (use_popup_as_root_window_for_test) {
-        set_window_style(WS_POPUP);
-        window_style = WS_POPUP;
-    }
-    gfx::Rect window_bounds =
-        GetWindowBoundsForClientBounds(window_style, window_ex_style(), properties->bounds);
-    gfx::WindowImpl::Init(properties->parent_widget, window_bounds);
-    SetWindowText(hwnd(), L"WinWindow");
+WinWindow::WinWindow(PlatformWindowDelegate* delegate,
+                     ui::PlatformWindowInitProperties* properties)
+    : delegate_(delegate) {
+  CHECK(delegate_);
+  DWORD window_style = WS_OVERLAPPEDWINDOW;
+  if (use_popup_as_root_window_for_test) {
+    set_window_style(WS_POPUP);
+    window_style = WS_POPUP;
+  }
+  gfx::Rect window_bounds = GetWindowBoundsForClientBounds(
+      window_style, window_ex_style(), properties->bounds);
+  gfx::WindowImpl::Init(properties->parent_widget, window_bounds);
+  SetWindowText(hwnd(), L"WinWindow");
 }
 
 WinWindow::WinWindow(PlatformWindowDelegate* delegate, const gfx::Rect& bounds)

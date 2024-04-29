@@ -224,8 +224,8 @@ int DemoMain() {
   RegisterClassEx(&wcex);
 
   // Create the parent window (assuming this is a Win32 application)
-  hwnd = CreateWindowEx(0, window_class.c_str(), L"External Window", WS_OVERLAPPEDWINDOW,
-                        0, 0, 1000, 1000, nullptr, nullptr,
+  hwnd = CreateWindowEx(0, window_class.c_str(), L"External Window",
+                        WS_OVERLAPPEDWINDOW, 0, 0, 1000, 1000, nullptr, nullptr,
                         GetModuleHandle(nullptr), nullptr);
 
   const DWORD create_window_error_parent = ::GetLastError();
@@ -268,6 +268,7 @@ int DemoMain() {
   std::unique_ptr<aura::WindowTreeHost> host(
       test_screen->CreateHostForPrimaryDisplay(hwnd));
   DemoWindowParentingClient window_parenting_client(host->window());
+  LOG(ERROR) << "window_parenting_client : " << &window_parenting_client;
   aura::test::TestFocusClient focus_client(host->window());
 
   // Create a hierarchy of test windows.
@@ -303,6 +304,14 @@ int DemoMain() {
 
   host->Show();
 
+  LOG(ERROR) << "host->window() : " << host->window();
+  LOG(ERROR) << "Print window tree : \n"
+             << host->window()->GetWindowHierarchy(5);
+  LOG(ERROR) << "host->window()->GetRootWindow : "
+             << host->window()->GetRootWindow();
+  LOG(ERROR) << "window1->GetRootWindow : " << window1.GetRootWindow();
+  LOG(ERROR) << "window2->GetRootWindow : " << window2.GetRootWindow();
+  LOG(ERROR) << "window3->GetRootWindow : " << window3.GetRootWindow();
   RunRunLoopUntilOnHostCloseRequested(host.get());
   return 0;
 }

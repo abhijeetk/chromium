@@ -111,6 +111,7 @@ ChildProcessLauncher::ChildProcessLauncher(
       terminate_child_on_shutdown_(terminate_on_shutdown)
 #endif
 {
+  LOG(ERROR) << "Command line : " << command_line->GetCommandLineString();
   DCHECK_CURRENTLY_ON(BrowserThread::UI);
 
 #if BUILDFLAG(IS_WIN)
