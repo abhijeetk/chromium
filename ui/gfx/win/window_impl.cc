@@ -19,6 +19,75 @@
 #include "ui/gfx/win/crash_id_helper.h"
 #include "ui/gfx/win/hwnd_util.h"
 
+// For debugging
+void PrintWindowStyles(DWORD dwStyle) {
+    LOG(ERROR) << "Window styles used in combination:" << std::endl;
+
+    if (dwStyle & WS_OVERLAPPED) LOG(ERROR) << "WS_OVERLAPPED" << std::endl;
+    if (dwStyle & WS_POPUP) LOG(ERROR) << "WS_POPUP" << std::endl;
+    if (dwStyle & WS_CHILD) LOG(ERROR) << "WS_CHILD" << std::endl;
+    if (dwStyle & WS_MINIMIZE) LOG(ERROR) << "WS_MINIMIZE" << std::endl;
+    if (dwStyle & WS_VISIBLE) LOG(ERROR) << "WS_VISIBLE" << std::endl;
+    if (dwStyle & WS_DISABLED) LOG(ERROR) << "WS_DISABLED" << std::endl;
+    if (dwStyle & WS_CLIPSIBLINGS) LOG(ERROR) << "WS_CLIPSIBLINGS" << std::endl;
+    if (dwStyle & WS_CLIPCHILDREN) LOG(ERROR) << "WS_CLIPCHILDREN" << std::endl;
+    if (dwStyle & WS_MAXIMIZE) LOG(ERROR) << "WS_MAXIMIZE" << std::endl;
+    if (dwStyle & WS_CAPTION) LOG(ERROR) << "WS_CAPTION" << std::endl;
+    if (dwStyle & WS_BORDER) LOG(ERROR) << "WS_BORDER" << std::endl;
+    if (dwStyle & WS_DLGFRAME) LOG(ERROR) << "WS_DLGFRAME" << std::endl;
+    if (dwStyle & WS_VSCROLL) LOG(ERROR) << "WS_VSCROLL" << std::endl;
+    if (dwStyle & WS_HSCROLL) LOG(ERROR) << "WS_HSCROLL" << std::endl;
+    if (dwStyle & WS_SYSMENU) LOG(ERROR) << "WS_SYSMENU" << std::endl;
+    if (dwStyle & WS_THICKFRAME) LOG(ERROR) << "WS_THICKFRAME" << std::endl;
+    if (dwStyle & WS_GROUP) LOG(ERROR) << "WS_GROUP" << std::endl;
+    if (dwStyle & WS_TABSTOP) LOG(ERROR) << "WS_TABSTOP" << std::endl;
+    if (dwStyle & WS_MINIMIZEBOX) LOG(ERROR) << "WS_MINIMIZEBOX" << std::endl;
+    if (dwStyle & WS_MAXIMIZEBOX) LOG(ERROR) << "WS_MAXIMIZEBOX" << std::endl;
+    if (dwStyle & WS_TILED) LOG(ERROR) << "WS_TILED" << std::endl;
+    if (dwStyle & WS_ICONIC) LOG(ERROR) << "WS_ICONIC" << std::endl;
+    if (dwStyle & WS_SIZEBOX) LOG(ERROR) << "WS_SIZEBOX" << std::endl;
+    if (dwStyle & WS_POPUPWINDOW) LOG(ERROR) << "WS_POPUPWINDOW" << std::endl;
+    if (dwStyle & WS_OVERLAPPEDWINDOW) LOG(ERROR) << "WS_OVERLAPPEDWINDOW" << std::endl;
+    if (dwStyle & WS_TILEDWINDOW) LOG(ERROR) << "WS_TILEDWINDOW" << std::endl;
+    if (dwStyle & WS_CHILDWINDOW) LOG(ERROR) << "WS_CHILDWINDOW" << std::endl;
+
+    LOG(ERROR) << "End of window styles." << std::endl;
+}
+
+void PrintWindowExtendedStyles(DWORD dw_ex_Style) {
+    LOG(ERROR) << "Window extended styles used in combination:" << std::endl;
+
+    if (dw_ex_Style & WS_EX_ACCEPTFILES) LOG(ERROR)  << "WS_EX_ACCEPTFILES";
+    if (dw_ex_Style & WS_EX_APPWINDOW) LOG(ERROR) << "WS_EX_APPWINDOW";
+    if (dw_ex_Style & WS_EX_CLIENTEDGE) LOG(ERROR) << "WS_EX_CLIENTEDGE";
+    if (dw_ex_Style & WS_EX_COMPOSITED) LOG(ERROR) << "WS_EX_COMPOSITED";
+    if (dw_ex_Style & WS_EX_CONTEXTHELP) LOG(ERROR) << "WS_EX_CONTEXTHELP";
+    if (dw_ex_Style & WS_EX_CONTROLPARENT) LOG(ERROR) << "WS_EX_CONTROLPARENT";
+    if (dw_ex_Style & WS_EX_DLGMODALFRAME) LOG(ERROR) << "WS_EX_DLGMODALFRAME";
+    if (dw_ex_Style & WS_EX_LAYERED) LOG(ERROR) << "WS_EX_LAYERED";
+    if (dw_ex_Style & WS_EX_LAYOUTRTL) LOG(ERROR) << "WS_EX_LAYOUTRTL";
+    if (dw_ex_Style & WS_EX_LEFT) LOG(ERROR) << "WS_EX_LEFT";
+    if (dw_ex_Style & WS_EX_LEFTSCROLLBAR) LOG(ERROR) << "WS_EX_LEFTSCROLLBAR";
+    if (dw_ex_Style & WS_EX_LTRREADING) LOG(ERROR) << "WS_EX_LTRREADING";
+    if (dw_ex_Style & WS_EX_MDICHILD) LOG(ERROR) << "WS_EX_MDICHILD";
+    if (dw_ex_Style & WS_EX_NOACTIVATE) LOG(ERROR) << "WS_EX_NOACTIVATE";
+    if (dw_ex_Style & WS_EX_NOINHERITLAYOUT) LOG(ERROR) << "WS_EX_NOINHERITLAYOUT";
+    if (dw_ex_Style & WS_EX_NOPARENTNOTIFY) LOG(ERROR) << "WS_EX_NOPARENTNOTIFY";
+    if (dw_ex_Style & WS_EX_NOREDIRECTIONBITMAP) LOG(ERROR) << "WS_EX_NOREDIRECTIONBITMAP";
+    if (dw_ex_Style & WS_EX_OVERLAPPEDWINDOW) LOG(ERROR) << "WS_EX_OVERLAPPEDWINDOW";
+    if (dw_ex_Style & WS_EX_PALETTEWINDOW) LOG(ERROR) << "WS_EX_PALETTEWINDOW";
+    if (dw_ex_Style & WS_EX_RIGHT) LOG(ERROR) << "WS_EX_RIGHT";
+    if (dw_ex_Style & WS_EX_RIGHTSCROLLBAR) LOG(ERROR) << "WS_EX_RIGHTSCROLLBAR";
+    if (dw_ex_Style & WS_EX_RTLREADING) LOG(ERROR) << "WS_EX_RTLREADING";
+    if (dw_ex_Style & WS_EX_STATICEDGE) LOG(ERROR) << "WS_EX_STATICEDGE";
+    if (dw_ex_Style & WS_EX_TOOLWINDOW) LOG(ERROR) << "WS_EX_TOOLWINDOW";
+    if (dw_ex_Style & WS_EX_TOPMOST) LOG(ERROR) << "WS_EX_TOPMOST";
+    if (dw_ex_Style & WS_EX_TRANSPARENT) LOG(ERROR) << "WS_EX_TRANSPARENT";
+    if (dw_ex_Style & WS_EX_WINDOWEDGE) LOG(ERROR) << "WS_EX_WINDOWEDGE";
+
+    LOG(ERROR) << "End of window styles." << std::endl;
+}
+
 namespace gfx {
 
 static const DWORD kWindowDefaultChildStyle =
@@ -211,6 +280,10 @@ void WindowImpl::Init(HWND parent, const Rect& bounds) {
 
   DWORD create_window_error = 0;
   HWND hwnd = nullptr;
+
+  LOG(ERROR) << "x : " << x << "\ty : " << y << "\twidth : " << width << "\theight : " << height;
+  PrintWindowStyles(window_style_);
+  PrintWindowExtendedStyles(window_ex_style_);
   hwnd = CreateWindowEx(window_ex_style_, reinterpret_cast<wchar_t*>(atom),
                           NULL, window_style_, x, y, width, height, parent,
                           NULL, NULL, this);
