@@ -169,7 +169,6 @@ void DesktopWindowTreeHostWin::FinishTouchDrag(gfx::Point screen_point) {
 // DesktopWindowTreeHostWin, DesktopWindowTreeHost implementation:
 
 void DesktopWindowTreeHostWin::Init(const Widget::InitParams& params) {
-    LOG(ERROR) << "Init Params " << params.ToString();
   wants_mouse_events_when_inactive_ = params.wants_mouse_events_when_inactive;
 
   wm::SetAnimationHost(content_window(), this);

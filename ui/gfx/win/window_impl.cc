@@ -211,19 +211,10 @@ void WindowImpl::Init(HWND parent, const Rect& bounds) {
 
   DWORD create_window_error = 0;
   HWND hwnd = nullptr;
-  if (parent) {
-    // for external parent use case
-    hwnd = CreateWindowEx(NULL, reinterpret_cast<wchar_t*>(atom), NULL,
-                          WS_CHILD | WS_VISIBLE, x, y, width, height, parent,
-                          NULL, NULL, this);
-    create_window_error = ::GetLastError();
-  } else {
-    // original code
-    hwnd = CreateWindowEx(window_ex_style_, reinterpret_cast<wchar_t*>(atom),
+  hwnd = CreateWindowEx(window_ex_style_, reinterpret_cast<wchar_t*>(atom),
                           NULL, window_style_, x, y, width, height, parent,
                           NULL, NULL, this);
-    create_window_error = ::GetLastError();
-  }
+  create_window_error = ::GetLastError();
 
   // First nccalcszie (during CreateWindow) for captioned windows is
   // deliberately ignored so force a second one here to get the right
