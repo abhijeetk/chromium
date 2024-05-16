@@ -279,12 +279,7 @@ void WindowImpl::Init(HWND parent, const Rect& bounds) {
   auto weak_this = weak_factory_.GetWeakPtr();
 
   DWORD create_window_error = 0;
-  HWND hwnd = nullptr;
-
-  LOG(ERROR) << "x : " << x << "\ty : " << y << "\twidth : " << width << "\theight : " << height;
-  PrintWindowStyles(window_style_);
-  PrintWindowExtendedStyles(window_ex_style_);
-  hwnd = CreateWindowEx(window_ex_style_, reinterpret_cast<wchar_t*>(atom),
+  HWND hwnd = CreateWindowEx(window_ex_style_, reinterpret_cast<wchar_t*>(atom),
                           NULL, window_style_, x, y, width, height, parent,
                           NULL, NULL, this);
   create_window_error = ::GetLastError();

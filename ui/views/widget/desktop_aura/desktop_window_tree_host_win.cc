@@ -193,16 +193,16 @@ void DesktopWindowTreeHostWin::Init(const Widget::InitParams& params) {
   z_order_ = params.EffectiveZOrderLevel();
 
   gfx::Rect pixel_bounds;
-  if (has_external_parent_ && params.type != Widget::InitParams::TYPE_MENU) {
-    // Scale relative to the screen that contains the parent window.
-    // Child windows always have origin (0,0).
-    pixel_bounds.set_size(display::win::ScreenWin::DIPToScreenSize(
-        parent_hwnd, params.bounds.size()));
-  } else {
+  //if (has_external_parent_ && params.type != Widget::InitParams::TYPE_MENU) {
+  //  // Scale relative to the screen that contains the parent window.
+  //  // Child windows always have origin (0,0).
+  //  pixel_bounds.set_size(display::win::ScreenWin::DIPToScreenSize(
+  //      parent_hwnd, params.bounds.size()));
+  //} else {
     // We don't have an HWND yet, so scale relative to the nearest screen.
     pixel_bounds =
         display::win::ScreenWin::DIPToScreenRect(nullptr, params.bounds);
-  }
+  //}
 
   message_handler_->Init(parent_hwnd, pixel_bounds, params.headless_mode);
   CreateCompositor(params.force_software_compositing);
