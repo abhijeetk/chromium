@@ -5,6 +5,7 @@
 #ifndef TOOLS_GN_TUTORIAL_HELLO_H_
 #define TOOLS_GN_TUTORIAL_HELLO_H_
 
+__attribute__((visibility("default")))
 void Hello(const char* who);
 
 #if defined(TWO_PEOPLE)

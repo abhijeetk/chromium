@@ -1,0 +1,48 @@
+import("//build/config/cast.gni")
+import("//build/config/chromeos/ui_mode.gni")
+import("//build/config/compiler/compiler.gni")
+import("//build/config/cronet/config.gni")
+import("//build/config/dcheck_always_on.gni")
+import("//build/config/features.gni")
+import("//build/config/ios/config.gni")
+import("//build/config/rust.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build/config/ui.gni")
+import("//build/gn_logs.gni")
+import("//build/util/generate_wrapper.gni")
+
+executable("hello_world") {
+    sources = [
+      "hello_world.cc",
+    ]
+}
+
+static_library("hello_world_static_lib") {
+    sources = [
+      "hello_world.cc",
+   ]
+}
+
+shared_library("hello") {
+    sources = [
+      "hello.cc",
+   ]
+   deps = [
+      ":hello_world_static_lib",
+   ]
+  configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+
+  ldflags = [
+    "-Wl,--verbose",
+    "-Wl,--export-dynamic", 
+  ]
+  }
+
+  executable("say_hello_linux") {
+    sources = [
+      "say_hello.cc",
+    ]
+    deps = [
+      ":hello",
+   ]
+  }

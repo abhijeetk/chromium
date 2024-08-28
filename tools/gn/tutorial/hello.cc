@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 #include "tools/gn/tutorial/hello.h"
+#include "hello_world.h"
 
 #include <stdio.h>
 
 void Hello(const char* who) {
-  printf("Hello, %s.\n", who);
+  printf("Hello, %s.\nCalling hello world : ", who);
+  hellow_world();
 }
 
 #if defined(TWO_PEOPLE)

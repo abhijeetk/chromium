@@ -8,3 +8,8 @@ int main() {
   printf("Hello, world.\n");
   return 0;
 }
+
+int hellow_world() {
+  printf("Hello, world.\n");
+  return 0;
+}
