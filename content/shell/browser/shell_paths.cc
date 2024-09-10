@@ -4,6 +4,7 @@
 
 #include "content/shell/browser/shell_paths.h"
 
+#include "base/logging.h"
 #include "base/base_paths.h"
 #include "base/environment.h"
 #include "base/files/file_util.h"
@@ -63,6 +64,7 @@ bool ShellPathProvider(int key, base::FilePath* result) {
   switch (key) {
     case SHELL_DIR_USER_DATA: {
       bool rv = GetDefaultUserDataDirectory(result);
+      LOG(ERROR) << "PATH : " << result->value();
       if (rv)
         ShellPathProvider::CreateDir(*result);
       return rv;

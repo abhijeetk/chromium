@@ -815,7 +815,7 @@ int ContentMainRunnerImpl::Initialize(ContentMainParams params) {
   // this point (because AtExitManager is already set up when the library is
   // loaded). Other platforms enable tracing below, after the initialization of
   // AtExitManager.
-  tracing::EnableStartupTracingIfNeeded();
+  // tracing::EnableStartupTracingIfNeeded();
 
   TRACE_EVENT0("startup,benchmark,rail", "ContentMainRunnerImpl::Initialize");
 #endif  // BUILDFLAG(IS_ANDROID)

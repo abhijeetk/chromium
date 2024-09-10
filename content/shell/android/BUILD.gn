@@ -228,26 +228,21 @@ content_shell_apk_tmpl("content_shell_apk") {
 
 # Include the static library for native app glue.
 static_library("android_native_app_glue_abhijeet") {
-  sources = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue/android_native_app_glue.c",
-  ]
+  sources = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue/android_native_app_glue.c" ]
 
-  include_dirs = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
-  ]
+  include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
 }
 
 # Define the shared library for the native code.
+# ABHIJEET : This is equivalent to libcontent_shell_content_view target. Both are shared libs.
 shared_library("native_activity") {
   testonly = true
-  sources = [
-    "main_abhijeet.cc",
-  ]
 
-  include_dirs = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
-  ]
+  sources = [ "main_abhijeet.cc" ]
 
+  include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+
+  # On Android,
   configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
 
   ldflags = [
@@ -275,6 +270,13 @@ shared_library("native_activity") {
 
   deps = [
     ":android_native_app_glue_abhijeet",
+    "//base:base",
+    "//components/crash/content/browser",
+    "//content/shell:content_shell_app",
+    "//content/shell:content_shell_lib",
+    "//content/shell:pak",
+    "//media",
+    "//skia",
   ]
 }
 
@@ -286,9 +288,7 @@ template("content_shell_apk_tmpl_abhijeet") {
     if (!defined(deps)) {
       deps = []
     }
-    deps += [
-
-    ]
+    deps += []
     loadable_modules = []
   }
 }

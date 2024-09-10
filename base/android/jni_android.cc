@@ -93,7 +93,7 @@ void InitVM(JavaVM* vm) {
   jni_zero::InitVM(vm);
   jni_zero::SetExceptionHandler(CheckException);
   JNIEnv* env = jni_zero::AttachCurrentThread();
-#if !BUILDFLAG(IS_ROBOLECTRIC)
+#if 0  //! BUILDFLAG(IS_ROBOLECTRIC)
   // Warm-up needed for GetClassFromSplit, must be called before we set the
   // resolver, since GetClassFromSplit won't work until after
   // PrepareClassLoaders has happened.

@@ -292,8 +292,9 @@ void ShellMainDelegate::PreSandboxStartup() {
 #endif  // !BUILDFLAG(IS_FUCHSIA)
 
   crash_reporter::InitializeCrashKeys();
-
+#if 0
   InitializeResourceBundle();
+#endif
 }
 
 absl::variant<int, MainFunctionParams> ShellMainDelegate::RunProcess(

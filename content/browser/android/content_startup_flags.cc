@@ -37,20 +37,17 @@ void SetContentCommandLineFlags(bool single_process) {
   parsed_command_line->AppendSwitch(switches::kEnableViewport);
   parsed_command_line->AppendSwitch(switches::kValidateInputEventStream);
 
-  if (base::android::BuildInfo::GetInstance()->sdk_int() >=
-      base::android::SDK_VERSION_MARSHMALLOW) {
-    parsed_command_line->AppendSwitch(switches::kEnableLongpressDragSelection);
-    parsed_command_line->AppendSwitchASCII(
-        blink::switches::kTouchTextSelectionStrategy,
-        blink::switches::kTouchTextSelectionStrategy_Direction);
-  }
+  parsed_command_line->AppendSwitch(switches::kEnableLongpressDragSelection);
+  parsed_command_line->AppendSwitchASCII(
+      blink::switches::kTouchTextSelectionStrategy,
+      blink::switches::kTouchTextSelectionStrategy_Direction);
 
   // On legacy low-memory devices the behavior has not been studied with regard
   // to having an extra process with similar priority as the foreground renderer
   // and given that the system will often be looking for a process to be killed
   // on such systems.
-  if (base::SysInfo::IsLowEndDevice())
-    parsed_command_line->AppendSwitch(switches::kInProcessGPU);
+  // if (base::SysInfo::IsLowEndDevice())
+  parsed_command_line->AppendSwitch(switches::kInProcessGPU);
 
   // Disable anti-aliasing.
   parsed_command_line->AppendSwitch(
