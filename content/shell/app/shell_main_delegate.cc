@@ -255,11 +255,11 @@ std::optional<int> ShellMainDelegate::BasicStartupComplete() {
 }
 
 bool ShellMainDelegate::ShouldCreateFeatureList(InvokedIn invoked_in) {
-  return absl::holds_alternative<InvokedInChildProcess>(invoked_in);
+  return true;
 }
 
 bool ShellMainDelegate::ShouldInitializeMojo(InvokedIn invoked_in) {
-  return ShouldCreateFeatureList(invoked_in);
+  return true;
 }
 
 void ShellMainDelegate::PreSandboxStartup() {
@@ -418,13 +418,15 @@ std::optional<int> ShellMainDelegate::PreBrowserMain() {
 
 std::optional<int> ShellMainDelegate::PostEarlyInitialization(
     InvokedIn invoked_in) {
-  if (!ShouldCreateFeatureList(invoked_in)) {
-    // Apply field trial testing configuration since content did not.
-    browser_client_->CreateFeatureListAndFieldTrials();
-  }
-  if (!ShouldInitializeMojo(invoked_in)) {
-    InitializeMojoCore();
-  }
+  //if (absl::holds_alternative<InvokedInBrowserProcess>(invoked_in)) {
+  //  browser_client_->CreateFeatureListAndFieldTrials();
+  //}
+  //if (!ShouldInitializeMojo(invoked_in)) {
+    // Since we've told Content not to initialize Mojo on its own, we must do it
+    // here manually.
+    content::InitializeMojoCore();
+  //}
+  return std::nullopt;
 
   const std::string process_type =
       base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(

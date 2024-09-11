@@ -139,13 +139,6 @@ void ShellBrowserMainParts::PostCreateMainMessageLoop() {
 }
 
 int ShellBrowserMainParts::PreEarlyInitialization() {
-#if defined(USE_AURA) && (BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS))
-  ui::InitializeInputMethodForTesting();
-#endif
-#if BUILDFLAG(IS_ANDROID)
-  net::NetworkChangeNotifier::SetFactory(
-      new net::NetworkChangeNotifierFactoryAndroid());
-#endif
   return RESULT_CODE_NORMAL_EXIT;
 }
 

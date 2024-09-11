@@ -1237,7 +1237,7 @@ int ContentMainRunnerImpl::RunBrowser(MainFunctionParams main_params,
         ->SetAllowSystemTracingConsumerCallback(
             base::BindRepeating(&ShouldAllowSystemTracingConsumer));
     tracing::InitTracingPostThreadPoolStartAndFeatureList(
-        /* enable_consumer */ true);
+        /* enable_consumer */ false);
 
     // PowerMonitor is needed in reduced mode. BrowserMainLoop will safely skip
     // initializing it again if it has already been initialized.
@@ -1273,7 +1273,7 @@ int ContentMainRunnerImpl::RunBrowser(MainFunctionParams main_params,
 
     download::SetIOTaskRunner(mojo_ipc_support_->io_thread()->task_runner());
 
-    InitializeBrowserMemoryInstrumentationClient();
+    //InitializeBrowserMemoryInstrumentationClient();
 
 #if BUILDFLAG(IS_ANDROID)
     if (start_minimal_browser) {

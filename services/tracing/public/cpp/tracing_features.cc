@@ -45,16 +45,7 @@ BASE_FEATURE(kEnablePerfettoSystemTracing,
 namespace tracing {
 
 bool ShouldSetupSystemTracing() {
-#if BUILDFLAG(IS_ANDROID)
-  if (base::android::BuildInfo::GetInstance()->is_debug_android()) {
-    return true;
-  }
-#endif  // BUILDFLAG(IS_ANDROID)
-  if (base::FeatureList::GetInstance()) {
-    return base::FeatureList::IsEnabled(features::kEnablePerfettoSystemTracing);
-  }
-  return features::kEnablePerfettoSystemTracing.default_state ==
-         base::FEATURE_ENABLED_BY_DEFAULT;
+  return false;
 }
 
 }  // namespace tracing

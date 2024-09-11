@@ -16,13 +16,11 @@ namespace base {
 namespace android {
 
 bool SysUtils::IsLowEndDeviceFromJni() {
-  JNIEnv* env = AttachCurrentThread();
-  return Java_SysUtils_isLowEndDevice(env);
+  return false;
 }
 
 bool SysUtils::IsCurrentlyLowMemory() {
-  JNIEnv* env = AttachCurrentThread();
-  return Java_SysUtils_isCurrentlyLowMemory(env);
+  return false;
 }
 
 // static

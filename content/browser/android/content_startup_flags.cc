@@ -34,14 +34,6 @@ void SetContentCommandLineFlags(bool single_process) {
     parsed_command_line->AppendSwitch(switches::kSingleProcess);
   }
 
-  parsed_command_line->AppendSwitch(switches::kEnableViewport);
-  parsed_command_line->AppendSwitch(switches::kValidateInputEventStream);
-
-  parsed_command_line->AppendSwitch(switches::kEnableLongpressDragSelection);
-  parsed_command_line->AppendSwitchASCII(
-      blink::switches::kTouchTextSelectionStrategy,
-      blink::switches::kTouchTextSelectionStrategy_Direction);
-
   // On legacy low-memory devices the behavior has not been studied with regard
   // to having an extra process with similar priority as the foreground renderer
   // and given that the system will often be looking for a process to be killed

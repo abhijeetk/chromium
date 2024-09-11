@@ -293,8 +293,8 @@ std::unique_ptr<PrefService> CreateLocalState() {
   metrics::MetricsService::RegisterPrefs(pref_registry.get());
   variations::VariationsService::RegisterPrefs(pref_registry.get());
 
-  base::FilePath path;
-  CHECK(base::PathService::Get(SHELL_DIR_USER_DATA, &path));
+  base::FilePath path("/data/user/0/com.example.myapp/files");
+  //CHECK(base::PathService::Get(SHELL_DIR_USER_DATA, &path));
   path = path.AppendASCII("Local State");
 
   PrefServiceFactory pref_service_factory;

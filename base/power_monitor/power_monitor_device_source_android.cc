@@ -81,20 +81,16 @@ void JNI_PowerMonitor_OnThermalStatusChanged(JNIEnv* env, int thermal_status) {
 }  // namespace android
 
 bool PowerMonitorDeviceSource::IsOnBatteryPower() {
-  JNIEnv* env = jni_zero::AttachCurrentThread();
-  return base::android::Java_PowerMonitor_isBatteryPower(env);
+  return false;
 }
 
 int PowerMonitorDeviceSource::GetRemainingBatteryCapacity() {
-  JNIEnv* env = jni_zero::AttachCurrentThread();
-  return base::android::Java_PowerMonitor_getRemainingBatteryCapacity(env);
+  return 0;
 }
 
 PowerThermalObserver::DeviceThermalState
 PowerMonitorDeviceSource::GetCurrentThermalState() {
-  JNIEnv* env = jni_zero::AttachCurrentThread();
-  return android::MapToDeviceThermalState(
-      android::Java_PowerMonitor_getCurrentThermalStatus(env));
+  return PowerThermalObserver::DeviceThermalState::kNominal;
 }
 
 }  // namespace base
