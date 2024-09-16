@@ -1275,6 +1275,14 @@ component("base") {
       "system/sys_info_linux.cc",
     ]
 
+    if (!defined(include_dirs)) {
+      include_dirs = []
+    }
+
+    include_dirs += [
+      "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
+    ]
+
     deps += [
       ":base_jni",
       ":base_shared_preferences_jni",

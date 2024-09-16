@@ -288,7 +288,9 @@ template("content_shell_apk_tmpl_abhijeet") {
     if (!defined(deps)) {
       deps = []
     }
-    deps += []
+    deps += [
+      ":content_shell_assets",
+    ]
     loadable_modules = []
   }
 }

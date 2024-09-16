@@ -26,6 +26,29 @@ import org.chromium.content_public.browser.selection.SelectionDropdownMenuDelega
 public class TestSelectionPopupController implements SelectionPopupController {
     public TestSelectionPopupController() {}
 
+    private DelegateEventHandler delegateEventHandler;
+    
+    @Override
+    public void setDelegate(Delegate delegate) {
+        // Implement the logic for setting the delegate
+        // For example, you might want to initialize `delegateEventHandler` based on the `delegate`
+    }
+
+    @Override
+    public DelegateEventHandler getDelegateEventHandler() {
+        // Return an instance of DelegateEventHandler
+        // Example: Returning a simple implementation of DelegateEventHandler
+        if (delegateEventHandler == null) {
+            delegateEventHandler = new DelegateEventHandler() {
+                @Override
+                public void onExecute(@ActionType int event, Object... args) {
+                    // Implement the logic for handling events
+                }
+            };
+        }
+        return delegateEventHandler;
+    }
+
     @Override
     public void setActionModeCallback(ActionModeCallback callback) {}
 

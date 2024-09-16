@@ -37,7 +37,22 @@ void SetScreenAndroid(bool use_display_wide_color_gamut) {
   display::Screen::SetScreenInstance(manager);
 
   JNIEnv* env = AttachCurrentThread();
-  Java_DisplayAndroidManager_onNativeSideCreated(env, (jlong)manager);
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  // Java_DisplayAndroidManager_onNativeSideCreated(env, (jlong)manager);
+  // Java_DisplayAndroidManager_onNativeSideCreated internally calls
+  // SetPrimaryDisplayId and sets sdkDisplayId = 0;
+  manager->SetPrimaryDisplayId(env, nullptr, 0);
+  manager->UpdateDisplay(env, nullptr,
+                         /*sdkDisplayId :*/ 0,
+                         /*width :*/ 1080,
+                         /*height : */ 2408,
+                         /*dipScale : */ 2.8125,
+                         /*rotationDegrees : */ 0,
+                         /*bitsPerPixel : */ 24,
+                         /*bitsPerComponent : */ 8,
+                         /*isWideColorGamut : */ 0,
+                         /*isHdr : */false,
+                         /*hdrMaxLuminanceRatio : */ 1);
 }
 
 DisplayAndroidManager::DisplayAndroidManager(bool use_display_wide_color_gamut)

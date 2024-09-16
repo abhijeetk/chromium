@@ -49,8 +49,8 @@ class ApplicationStatusListenerImpl : public ApplicationStatusListener {
     SetCallback(callback);
     g_observers.Get().AddObserver(this);
 
-    Java_ApplicationStatus_registerThreadSafeNativeApplicationStateListener(
-        AttachCurrentThread());
+    //Java_ApplicationStatus_registerThreadSafeNativeApplicationStateListener(
+    //    AttachCurrentThread());
   }
 
   ~ApplicationStatusListenerImpl() override {

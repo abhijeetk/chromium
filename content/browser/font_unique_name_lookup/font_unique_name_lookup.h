@@ -19,6 +19,8 @@
 
 #include <string>
 
+CONTENT_EXPORT extern struct android_app* g_app_state;
+
 namespace content {
 
 // Scans a set of font files for the full font name and postscript name

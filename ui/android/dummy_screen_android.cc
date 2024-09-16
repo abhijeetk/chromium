@@ -5,6 +5,7 @@
 #include "ui/android/dummy_screen_android.h"
 #include "ui/display/display.h"
 #include "ui/display/screen.h"
+#include "base/debug/stack_trace.h"
 
 namespace ui {
 
@@ -71,6 +72,7 @@ class DummyScreenAndroid : public display::Screen {
 };
 
 display::Screen* CreateDummyScreenAndroid() {
+  base::debug::StackTrace().Print();
   return new DummyScreenAndroid;
 }
 

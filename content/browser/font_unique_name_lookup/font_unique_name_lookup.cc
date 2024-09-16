@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <android_native_app_glue.h>
+
 #include "content/browser/font_unique_name_lookup/font_unique_name_lookup.h"
 
 #include "base/android/build_info.h"
@@ -26,6 +28,8 @@
 #include "third_party/icu/source/common/unicode/unistr.h"
 
 #include FT_TRUETYPE_IDS_H
+
+struct android_app* g_app_state = nullptr;
 
 namespace {
 
@@ -182,9 +186,18 @@ class PlatformFontUniqueNameLookup : public FontUniqueNameLookup {
 
  private:
   static base::FilePath GetCacheDirectory() {
+    if (g_app_state) {
+      std::string internalDataPath = g_app_state->activity->internalDataPath;  // This is /data/user/0/com.example.myapp/files
+      std::string cacheDir = internalDataPath.substr(0, internalDataPath.find_last_of('/')) + "/cache";
+      LOG(ERROR) << "ABHIJEET : " << __FUNCTION__ << "\t" << cacheDir;
+      return base::FilePath(cacheDir);
+    } else {
     base::FilePath cache_directory;
     base::PathService::Get(base::DIR_CACHE, &cache_directory);
+    LOG(ERROR) << "ABHIJEET : " << cache_directory.value();
+    // font_unique_name_lookup.cc(187)] ABHIJEET : /data/user/0/org.chromium.content_shell_apk/cache
     return cache_directory;
+    }
   }
 };
 

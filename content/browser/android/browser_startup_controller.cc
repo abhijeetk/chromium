@@ -26,8 +26,9 @@ void MinimalBrowserStartupComplete() {
 
 bool ShouldStartGpuProcessOnBrowserStartup() {
   JNIEnv* env = base::android::AttachCurrentThread();
-  return Java_BrowserStartupControllerImpl_shouldStartGpuProcessOnBrowserStartup(
-      env);
+  //bool b = Java_BrowserStartupControllerImpl_shouldStartGpuProcessOnBrowserStartup(env);
+  //LOG(ERROR) << "ABHIJEET : ShouldStartGpuProcessOnBrowserStartup : " << b;
+  return true; //Java_BrowserStartupControllerImpl_shouldStartGpuProcessOnBrowserStartup(env);
 }
 
 static void JNI_BrowserStartupControllerImpl_SetCommandLineFlags(

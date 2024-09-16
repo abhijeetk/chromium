@@ -11,6 +11,8 @@
 #include "base/files/file_path.h"
 #include "base/files/memory_mapped_file.h"
 
+BASE_EXPORT extern struct android_app* g_app_state;
+
 namespace base {
 namespace android {
 

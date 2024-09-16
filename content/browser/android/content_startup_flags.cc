@@ -19,6 +19,8 @@ namespace content {
 
 void SetContentCommandLineFlags(bool single_process) {
   // May be called multiple times, to cover all possible program entry points.
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  base::debug::StackTrace().Print();
   static bool already_initialized = false;
   if (already_initialized)
     return;
@@ -34,12 +36,20 @@ void SetContentCommandLineFlags(bool single_process) {
     parsed_command_line->AppendSwitch(switches::kSingleProcess);
   }
 
+  parsed_command_line->AppendSwitch(switches::kEnableViewport);
+  parsed_command_line->AppendSwitch(switches::kValidateInputEventStream);
+
+  parsed_command_line->AppendSwitch(switches::kEnableLongpressDragSelection);
+  parsed_command_line->AppendSwitchASCII(
+      blink::switches::kTouchTextSelectionStrategy,
+      blink::switches::kTouchTextSelectionStrategy_Direction);
+
   // On legacy low-memory devices the behavior has not been studied with regard
   // to having an extra process with similar priority as the foreground renderer
   // and given that the system will often be looking for a process to be killed
   // on such systems.
   // if (base::SysInfo::IsLowEndDevice())
-  parsed_command_line->AppendSwitch(switches::kInProcessGPU);
+    parsed_command_line->AppendSwitch(switches::kInProcessGPU);
 
   // Disable anti-aliasing.
   parsed_command_line->AppendSwitch(

@@ -189,6 +189,7 @@ bool GetCurrentDnsServers(std::vector<IPEndPoint>* dns_servers,
                           bool* dns_over_tls_active,
                           std::string* dns_over_tls_hostname,
                           std::vector<std::string>* search_suffixes) {
+#if 0
   DCHECK_GE(base::android::BuildInfo::GetInstance()->sdk_int(),
             base::android::SDK_VERSION_MARSHMALLOW);
 
@@ -198,8 +199,13 @@ bool GetCurrentDnsServers(std::vector<IPEndPoint>* dns_servers,
       Java_AndroidNetworkLibrary_getCurrentDnsStatus(env);
   if (result.is_null())
     return false;
-  return GetDnsServersInternal(env, result, dns_servers, dns_over_tls_active,
+  bool b = GetDnsServersInternal(env, result, dns_servers, dns_over_tls_active,
                                dns_over_tls_hostname, search_suffixes);
+  LOG(ERROR) << __FUNCTION__ << "\t" << b;
+  return b;
+#else
+  return false;
+#endif
 }
 
 bool GetDnsServersForNetwork(std::vector<IPEndPoint>* dns_servers,
