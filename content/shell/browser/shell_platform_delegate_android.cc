@@ -47,8 +47,11 @@ void ShellPlatformDelegate::CreatePlatformWindow(
     const gfx::Size& initial_size) {
   DCHECK(!base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
-
+#if BUILDFLAG(SNAP_BUILD)
+  shell_data.java_object.Reset(nullptr);
+#else
   shell_data.java_object.Reset(CreateShellView(shell));
+#endif
 }
 
 void ShellPlatformDelegate::CleanUp(Shell* shell) {

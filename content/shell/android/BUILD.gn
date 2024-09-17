@@ -233,74 +233,74 @@ static_library("android_native_app_glue_abhijeet") {
   include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
 }
 
-# Define the shared library for the native code.
-# ABHIJEET : This is equivalent to libcontent_shell_content_view target. Both are shared libs.
-shared_library("native_activity") {
-  testonly = true
-
-  sources = [ "main_abhijeet.cc" ]
-
-  include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
-
-  # On Android,
-  configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
-
-  ldflags = [
-    "-Wl,--verbose",
-    "-Wl,--export-dynamic",
-  ]
-
-  # Suppress error for use of raw ptr
-  cflags = [
-    "-Xclang",
-    "-plugin-arg-find-bad-constructs",
-    "-Xclang",
-    "raw-ptr-exclude-path=content/shell/android/main_abhijeet.cc",
-  ]
-
-  # disable errors for "is deprecated: first deprecated in Android 26"
-  cflags += [ "-Wno-deprecated-declarations" ]
-
-  libs = [
-    "log",
-    "android",
-    "EGL",
-    "GLESv1_CM",
-  ]
-
-  deps = [
-    ":android_native_app_glue_abhijeet",
-    "//base:base",
-    "//components/crash/content/browser",
-    "//content/shell:content_shell_app",
-    "//content/shell:content_shell_lib",
-    "//content/shell:pak",
-    "//media",
-    "//skia",
-  ]
-}
-
-template("content_shell_apk_tmpl_abhijeet") {
-  _target_type = invoker.target_type
-  target(_target_type, target_name) {
-    forward_variables_from(invoker, "*")
+if (snap_build) {
+  # Define the shared library for the native code.
+  # ABHIJEET : This is equivalent to libcontent_shell_content_view target. Both are shared libs.
+  shared_library("native_activity") {
     testonly = true
-    if (!defined(deps)) {
-      deps = []
-    }
-    deps += [
-      ":content_shell_assets",
-    ]
-    loadable_modules = []
-  }
-}
 
-content_shell_apk_tmpl_abhijeet("content_shell_apk_abhijeet") {
-  target_type = "android_apk"
-  apk_name = "ContentShellAbhijeet"
-  android_manifest = content_shell_manifest_abhijeet
-  android_manifest_dep = ":content_shell_manifest_abhijeet"
-  shared_libraries = [ ":native_activity" ]
+    sources = [ "main_abhijeet.cc" ]
+
+    include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+
+    # On Android,
+    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+
+    ldflags = [
+      "-Wl,--verbose",
+      "-Wl,--export-dynamic",
+    ]
+
+    # Suppress error for use of raw ptr
+    cflags = [
+      "-Xclang",
+      "-plugin-arg-find-bad-constructs",
+      "-Xclang",
+      "raw-ptr-exclude-path=content/shell/android/main_abhijeet.cc",
+    ]
+
+    # disable errors for "is deprecated: first deprecated in Android 26"
+    cflags += [ "-Wno-deprecated-declarations" ]
+
+    libs = [
+      "log",
+      "android",
+      "EGL",
+      "GLESv1_CM",
+    ]
+
+    deps = [
+      ":android_native_app_glue_abhijeet",
+      "//base:base",
+      "//components/crash/content/browser",
+      "//content/shell:content_shell_app",
+      "//content/shell:content_shell_lib",
+      "//content/shell:pak",
+      "//media",
+      "//skia",
+    ]
+  }
+
+  template("content_shell_apk_tmpl_abhijeet") {
+    _target_type = invoker.target_type
+    target(_target_type, target_name) {
+      forward_variables_from(invoker, "*")
+      testonly = true
+      if (!defined(deps)) {
+        deps = []
+      }
+      deps += [ ":content_shell_assets" ]
+      loadable_modules = []
+    }
+  }
+
+  content_shell_apk_tmpl_abhijeet("content_shell_apk_abhijeet") {
+    target_type = "android_apk"
+    apk_name = "ContentShellAbhijeet"
+    android_manifest = content_shell_manifest_abhijeet
+    android_manifest_dep = ":content_shell_manifest_abhijeet"
+    shared_libraries = [ ":native_activity" ]
+  }
 }
 
 content_shell_apk_tmpl("content_shell_test_apk") {

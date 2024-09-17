@@ -12,23 +12,49 @@
 
 #include "base/base_jni/PathUtils_jni.h"
 
+// struct android_app* g_app_state = nullptr;
+
 namespace base {
 namespace android {
 
+// GetCacheDirectory : /data/user/0/org.chromium.content_shell_apk/cache
+// GetDataDirectory  :
+// /data/user/0/org.chromium.content_shell_apk/app_content_shell
+// GetNativeLibraryDirectory :
+// /data/app/~~mCREp3eQwaHPrC8YoUD0sQ==/org.chromium.content_shell_apk-TVqioX1NN-6qFmT-8IJSOw==/lib/arm64
+
 bool GetDataDirectory(FilePath* result) {
+#if BUILDFLAG(SNAP_BUILD)
+  if (g_app_state) {
+    FilePath data_path("/data/user/0/com.example.myapp/app_content_shell");
+    *result = data_path;
+    return true;
+  }
+  return false;
+#else
   JNIEnv* env = AttachCurrentThread();
   ScopedJavaLocalRef<jstring> path = Java_PathUtils_getDataDirectory(env);
   FilePath data_path(ConvertJavaStringToUTF8(path));
   *result = data_path;
   return true;
+#endif
 }
 
 bool GetCacheDirectory(FilePath* result) {
+#if BUILDFLAG(SNAP_BUILD)
+  if (g_app_state) {
+    FilePath cache_path("/data/user/0/com.example.myapp/cache");
+    *result = cache_path;
+    return true;
+  }
+  return false;
+#else
   JNIEnv* env = AttachCurrentThread();
   ScopedJavaLocalRef<jstring> path = Java_PathUtils_getCacheDirectory(env);
   FilePath cache_path(ConvertJavaStringToUTF8(path));
   *result = cache_path;
   return true;
+#endif
 }
 
 bool GetThumbnailCacheDirectory(FilePath* result) {
@@ -57,6 +83,7 @@ std::vector<FilePath> GetAllPrivateDownloadsDirectories() {
   std::vector<base::FilePath> file_paths;
   for (const auto& dir : dirs)
     file_paths.emplace_back(dir);
+
   return file_paths;
 }
 
@@ -73,12 +100,23 @@ std::vector<FilePath> GetSecondaryStorageDownloadDirectories() {
 }
 
 bool GetNativeLibraryDirectory(FilePath* result) {
+#if BUILDFLAG(SNAP_BUILD)
+  if (g_app_state) {
+    FilePath library_path(
+        "/data/app/~~mCREp3eQwaHPrC8YoUD0sQ==/"
+        "com.example.myapp-TVqioX1NN-6qFmT-8IJSOw==/lib/arm64");
+    *result = library_path;
+    return true;
+  }
+  return false;
+#else
   JNIEnv* env = AttachCurrentThread();
   ScopedJavaLocalRef<jstring> path =
       Java_PathUtils_getNativeLibraryDirectory(env);
   FilePath library_path(ConvertJavaStringToUTF8(path));
   *result = library_path;
   return true;
+#endif
 }
 
 bool GetExternalStorageDirectory(FilePath* result) {

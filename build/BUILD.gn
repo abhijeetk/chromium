@@ -57,7 +57,10 @@ buildflag_header("branding_buildflags") {
 
 buildflag_header("blink_buildflags") {
   header = "blink_buildflags.h"
-  flags = [ "USE_BLINK=$use_blink" ]
+  flags = [
+    "USE_BLINK=$use_blink",
+    "SNAP_BUILD=$snap_build",
+  ]
 }
 
 buildflag_header("chromecast_buildflags") {

@@ -3197,10 +3197,10 @@ source_set("browser") {
       include_dirs = []
     }
 
-    include_dirs += [
-      "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
-    ]
-    
+    if (snap_build) {
+      include_dirs += [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+    }
+
     deps += [
       ":reflection_jni_headers",
       "//build/config/freetype",

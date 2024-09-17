@@ -51,7 +51,7 @@ void SetScreenAndroid(bool use_display_wide_color_gamut) {
                          /*bitsPerPixel : */ 24,
                          /*bitsPerComponent : */ 8,
                          /*isWideColorGamut : */ 0,
-                         /*isHdr : */false,
+                         /*isHdr : */ false,
                          /*hdrMaxLuminanceRatio : */ 1);
 }
 

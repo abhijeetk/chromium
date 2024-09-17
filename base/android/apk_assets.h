@@ -10,8 +10,11 @@
 #include "base/android/jni_android.h"
 #include "base/files/file_path.h"
 #include "base/files/memory_mapped_file.h"
+#include "build/blink_buildflags.h"
 
+#if BUILDFLAG(SNAP_BUILD)
 BASE_EXPORT extern struct android_app* g_app_state;
+#endif
 
 namespace base {
 namespace android {

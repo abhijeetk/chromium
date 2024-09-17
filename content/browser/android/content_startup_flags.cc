@@ -19,8 +19,6 @@ namespace content {
 
 void SetContentCommandLineFlags(bool single_process) {
   // May be called multiple times, to cover all possible program entry points.
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
-  base::debug::StackTrace().Print();
   static bool already_initialized = false;
   if (already_initialized)
     return;
@@ -49,7 +47,7 @@ void SetContentCommandLineFlags(bool single_process) {
   // and given that the system will often be looking for a process to be killed
   // on such systems.
   // if (base::SysInfo::IsLowEndDevice())
-    parsed_command_line->AppendSwitch(switches::kInProcessGPU);
+  parsed_command_line->AppendSwitch(switches::kInProcessGPU);
 
   // Disable anti-aliasing.
   parsed_command_line->AppendSwitch(

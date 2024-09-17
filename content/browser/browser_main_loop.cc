@@ -943,7 +943,6 @@ void BrowserMainLoop::SynchronouslyFlushStartupTasks() {
 #endif  // BUILDFLAG(IS_ANDROID)
 
 int BrowserMainLoop::CreateThreads() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__ << "\t" << base::CommandLine::ForCurrentProcess()->GetCommandLineString();
   TRACE_EVENT0("startup,rail", "BrowserMainLoop::CreateThreads");
 
   // Release the ThreadPool's threads.

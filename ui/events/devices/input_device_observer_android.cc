@@ -5,6 +5,7 @@
 #include "ui/events/devices/input_device_observer_android.h"
 
 #include "base/memory/singleton.h"
+#include "build/blink_buildflags.h"
 #include "ui/events/devices/ui_events_devices_jni_headers/InputDeviceObserver_jni.h"
 
 using jni_zero::AttachCurrentThread;
@@ -25,15 +26,19 @@ InputDeviceObserverAndroid* InputDeviceObserverAndroid::GetInstance() {
 void InputDeviceObserverAndroid::AddObserver(
     ui::InputDeviceEventObserver* observer) {
   observers_.AddObserver(observer);
+#if !BUILDFLAG(SNAP_BUILD)
   JNIEnv* env = AttachCurrentThread();
   Java_InputDeviceObserver_addObserver(env);
+#endif
 }
 
 void InputDeviceObserverAndroid::RemoveObserver(
     ui::InputDeviceEventObserver* observer) {
   observers_.RemoveObserver(observer);
+#if !BUILDFLAG(SNAP_BUILD)
   JNIEnv* env = AttachCurrentThread();
   Java_InputDeviceObserver_removeObserver(env);
+#endif
 }
 
 static void JNI_InputDeviceObserver_InputConfigurationChanged(

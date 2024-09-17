@@ -15,6 +15,7 @@
 #include "base/debug/debugging_buildflags.h"
 #include "base/feature_list.h"
 #include "base/logging.h"
+#include "build/blink_buildflags.h"
 #include "build/build_config.h"
 #include "build/robolectric_buildflags.h"
 #include "third_party/abseil-cpp/absl/base/attributes.h"
@@ -93,7 +94,9 @@ void InitVM(JavaVM* vm) {
   jni_zero::InitVM(vm);
   jni_zero::SetExceptionHandler(CheckException);
   JNIEnv* env = jni_zero::AttachCurrentThread();
-#if 0 //!BUILDFLAG(IS_ROBOLECTRIC) && !BUILDFLAG(SNAP_WEBVIEW)
+#if BUILDFLAG(SNAP_BUILD)
+  LOG(ERROR) << "Don't need to load java classes";
+#else
   // Warm-up needed for GetClassFromSplit, must be called before we set the
   // resolver, since GetClassFromSplit won't work until after
   // PrepareClassLoaders has happened.

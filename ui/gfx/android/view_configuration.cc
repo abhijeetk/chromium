@@ -7,6 +7,7 @@
 #include "base/android/jni_android.h"
 #include "base/lazy_instance.h"
 #include "base/synchronization/lock.h"
+#include "build/blink_buildflags.h"
 #include "ui/gfx/gfx_jni_headers/ViewConfigurationHelper_jni.h"
 
 using base::android::AttachCurrentThread;
@@ -26,7 +27,9 @@ struct ViewConfigurationData {
         touch_slop_in_dips_(0),
         double_tap_slop_in_dips_(0),
         min_scaling_span_in_dips_(0) {
+#if !BUILDFLAG(SNAP_BUILD)
     JNIEnv* env = AttachCurrentThread();
+
     j_view_configuration_helper_.Reset(
         Java_ViewConfigurationHelper_createWithListener(env));
 
@@ -46,6 +49,17 @@ struct ViewConfigurationData {
                env, j_view_configuration_helper_),
            Java_ViewConfigurationHelper_getMinScalingSpan(
                env, j_view_configuration_helper_));
+#else
+    double_tap_timeout_in_ms_ = 300;
+    long_press_timeout_in_ms_ = 500;
+    tap_timeout_in_ms_ = 100;
+
+    Update(/*maximum_fling_velocity=*/8000,
+           /*minimum_fling_velocity=*/50.1333,
+           /*touch_slop=*/8.17778,
+           /*double_tap_slop=*/99.9111,
+           /*min_scaling_span=*/67.9111);
+#endif
   }
 
   ViewConfigurationData(const ViewConfigurationData&) = delete;

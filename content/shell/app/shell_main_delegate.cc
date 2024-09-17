@@ -125,7 +125,6 @@ const GUID kContentShellProviderName = {
 #endif
 
 void InitLogging(const base::CommandLine& command_line) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   LoggingDest dest = LoggingDest::kFile;
 
   if (command_line.GetSwitchValueASCII(switches::kEnableLogging) == "stderr") {
@@ -202,15 +201,12 @@ namespace content {
 
 ShellMainDelegate::ShellMainDelegate(bool is_content_browsertests)
     : is_content_browsertests_(is_content_browsertests) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
 }
 
 ShellMainDelegate::~ShellMainDelegate() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
 }
 
 std::optional<int> ShellMainDelegate::BasicStartupComplete() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   base::CommandLine& command_line = *base::CommandLine::ForCurrentProcess();
   if (command_line.HasSwitch("run-layout-test")) {
     std::cerr << std::string(79, '*') << "\n"
@@ -223,9 +219,6 @@ std::optional<int> ShellMainDelegate::BasicStartupComplete() {
 #if BUILDFLAG(IS_ANDROID)
   Compositor::Initialize();
 #endif
-
-  LOG(ERROR) << "ABHIJEET : commandline : " << __FUNCTION__ << "\t"
-             << base::CommandLine::ForCurrentProcess()->GetArgumentsString();
 
 #if BUILDFLAG(IS_WIN)
   // Enable trace control and transport through event tracing for Windows.
@@ -263,17 +256,14 @@ std::optional<int> ShellMainDelegate::BasicStartupComplete() {
 }
 
 bool ShellMainDelegate::ShouldCreateFeatureList(InvokedIn invoked_in) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   return true;
 }
 
 bool ShellMainDelegate::ShouldInitializeMojo(InvokedIn invoked_in) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   return true;
 }
 
 void ShellMainDelegate::PreSandboxStartup() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
 #if defined(ARCH_CPU_ARM_FAMILY) && \
     (BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS))
   // Create an instance of the CPU class to parse /proc/cpuinfo and cache
@@ -305,13 +295,11 @@ void ShellMainDelegate::PreSandboxStartup() {
   crash_reporter::InitializeCrashKeys();
 
   InitializeResourceBundle();
-
 }
 
 absl::variant<int, MainFunctionParams> ShellMainDelegate::RunProcess(
     const std::string& process_type,
     MainFunctionParams main_function_params) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   // For non-browser process, return and have the caller run the main loop.
   if (!process_type.empty())
     return std::move(main_function_params);
@@ -360,7 +348,6 @@ absl::variant<int, MainFunctionParams> ShellMainDelegate::RunProcess(
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
 void ShellMainDelegate::ZygoteForked() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
           switches::kEnableCrashReporter)) {
     std::string process_type =
@@ -374,7 +361,6 @@ void ShellMainDelegate::ZygoteForked() {
 #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
 
 void ShellMainDelegate::InitializeResourceBundle() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
 #if BUILDFLAG(IS_ANDROID)
   // On Android, the renderer runs with a different UID and can never access
   // the file system. Use the file descriptor passed in at launch time.
@@ -421,7 +407,6 @@ void ShellMainDelegate::InitializeResourceBundle() {
 }
 
 std::optional<int> ShellMainDelegate::PreBrowserMain() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   std::optional<int> exit_code = content::ContentMainDelegate::PreBrowserMain();
   if (exit_code.has_value())
     return exit_code;
@@ -434,7 +419,6 @@ std::optional<int> ShellMainDelegate::PreBrowserMain() {
 
 std::optional<int> ShellMainDelegate::PostEarlyInitialization(
     InvokedIn invoked_in) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   //if (absl::holds_alternative<InvokedInBrowserProcess>(invoked_in)) {
   //  browser_client_->CreateFeatureListAndFieldTrials();
   //}
@@ -471,13 +455,11 @@ std::optional<int> ShellMainDelegate::PostEarlyInitialization(
 }
 
 ContentClient* ShellMainDelegate::CreateContentClient() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   content_client_ = std::make_unique<ShellContentClient>();
   return content_client_.get();
 }
 
 ContentBrowserClient* ShellMainDelegate::CreateContentBrowserClient() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
 #if !BUILDFLAG(IS_ANDROID)
   if (switches::IsRunWebTestsSwitchPresent()) {
     browser_client_ = std::make_unique<WebTestContentBrowserClient>();
@@ -489,13 +471,11 @@ ContentBrowserClient* ShellMainDelegate::CreateContentBrowserClient() {
 }
 
 ContentGpuClient* ShellMainDelegate::CreateContentGpuClient() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   gpu_client_ = std::make_unique<ShellContentGpuClient>();
   return gpu_client_.get();
 }
 
 ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
 #if !BUILDFLAG(IS_ANDROID)
   if (switches::IsRunWebTestsSwitchPresent()) {
     renderer_client_ = std::make_unique<WebTestContentRendererClient>();
@@ -507,7 +487,6 @@ ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
 }
 
 ContentUtilityClient* ShellMainDelegate::CreateContentUtilityClient() {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   utility_client_ =
       std::make_unique<ShellContentUtilityClient>(is_content_browsertests_);
   return utility_client_.get();

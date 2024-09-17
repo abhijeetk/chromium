@@ -6,6 +6,7 @@
 
 #include "base/android/jni_android.h"
 #include "base/android/jni_string.h"
+#include "build/blink_buildflags.h"
 #include "content/browser/android/content_startup_flags.h"
 #include "content/browser/browser_main_loop.h"
 #include "content/public/android/content_main_dex_jni/BrowserStartupControllerImpl_jni.h"
@@ -25,10 +26,13 @@ void MinimalBrowserStartupComplete() {
 }
 
 bool ShouldStartGpuProcessOnBrowserStartup() {
+#if !BUILDFLAG(SNAP_BUILD)
   JNIEnv* env = base::android::AttachCurrentThread();
-  //bool b = Java_BrowserStartupControllerImpl_shouldStartGpuProcessOnBrowserStartup(env);
-  //LOG(ERROR) << "ABHIJEET : ShouldStartGpuProcessOnBrowserStartup : " << b;
-  return true; //Java_BrowserStartupControllerImpl_shouldStartGpuProcessOnBrowserStartup(env);
+  return Java_BrowserStartupControllerImpl_shouldStartGpuProcessOnBrowserStartup(
+      env);
+#else
+  return true;
+#endif
 }
 
 static void JNI_BrowserStartupControllerImpl_SetCommandLineFlags(

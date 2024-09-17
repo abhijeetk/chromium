@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <android_native_app_glue.h>
-
 #include "content/browser/font_unique_name_lookup/font_unique_name_lookup.h"
 
 #include "base/android/build_info.h"
@@ -18,6 +16,7 @@
 #include "base/task/sequenced_task_runner.h"
 #include "base/task/thread_pool.h"
 #include "base/trace_event/trace_event.h"
+#include "build/blink_buildflags.h"
 #include "third_party/blink/public/common/font_unique_name_lookup/font_table_matcher.h"
 #include "third_party/blink/public/common/font_unique_name_lookup/font_table_persistence.h"
 #include "third_party/blink/public/common/font_unique_name_lookup/font_unique_name_table.pb.h"
@@ -29,7 +28,10 @@
 
 #include FT_TRUETYPE_IDS_H
 
+#if BUILDFLAG(SNAP_BUILD)
+#include <android_native_app_glue.h>
 struct android_app* g_app_state = nullptr;
+#endif
 
 namespace {
 
@@ -186,18 +188,27 @@ class PlatformFontUniqueNameLookup : public FontUniqueNameLookup {
 
  private:
   static base::FilePath GetCacheDirectory() {
+#if BUILDFLAG(SNAP_BUILD)
     if (g_app_state) {
-      std::string internalDataPath = g_app_state->activity->internalDataPath;  // This is /data/user/0/com.example.myapp/files
-      std::string cacheDir = internalDataPath.substr(0, internalDataPath.find_last_of('/')) + "/cache";
+      std::string internalDataPath =
+          g_app_state->activity
+              ->internalDataPath;  // This is
+                                   // /data/user/0/com.example.myapp/files
+      std::string cacheDir =
+          internalDataPath.substr(0, internalDataPath.find_last_of('/')) +
+          "/cache";
       LOG(ERROR) << "ABHIJEET : " << __FUNCTION__ << "\t" << cacheDir;
       return base::FilePath(cacheDir);
-    } else {
+    }
+    return base::FilePath();
+#else
     base::FilePath cache_directory;
     base::PathService::Get(base::DIR_CACHE, &cache_directory);
     LOG(ERROR) << "ABHIJEET : " << cache_directory.value();
-    // font_unique_name_lookup.cc(187)] ABHIJEET : /data/user/0/org.chromium.content_shell_apk/cache
+    // font_unique_name_lookup.cc(187)] ABHIJEET :
+    // /data/user/0/org.chromium.content_shell_apk/cache
     return cache_directory;
-    }
+#endif
   }
 };
 
@@ -211,8 +222,8 @@ FontUniqueNameLookup::FontUniqueNameLookup(
     : cache_directory_(cache_directory) {
   if (!DirectoryExists(cache_directory_) ||
       !base::PathIsWritable(cache_directory_)) {
-    DCHECK(false) << "Error accessing cache directory for writing: "
-                  << cache_directory_.value();
+    CHECK(false) << "Error accessing cache directory for writing: "
+                 << cache_directory_.value();
     cache_directory_ = base::FilePath();
   }
 }
