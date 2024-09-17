@@ -230,10 +230,14 @@ WebContentsAndroid::WebContentsAndroid(WebContentsImpl* web_contents)
       navigation_controller_(&(web_contents->GetController())) {
   g_allocated_web_contents_androids.Get().insert(this);
   JNIEnv* env = AttachCurrentThread();
+#if BUILDFLAG(ANATIVE_BUILD)
+  obj_.Reset(env, nullptr);
+#else
   obj_.Reset(env,
              Java_WebContentsImpl_create(env, reinterpret_cast<intptr_t>(this),
                                          navigation_controller_.GetJavaObject())
                  .obj());
+#endif
 }
 
 WebContentsAndroid::~WebContentsAndroid() {

@@ -189,6 +189,11 @@ bool GetCurrentDnsServers(std::vector<IPEndPoint>* dns_servers,
                           bool* dns_over_tls_active,
                           std::string* dns_over_tls_hostname,
                           std::vector<std::string>* search_suffixes) {
+#if 1  // BUILDFLAG(ANATIVE_BUILD)
+  // TODO(abhijeet) : Both content_shell and Android Native build should use same code
+  // path for testing.
+  return false;
+#else
   DCHECK_GE(base::android::BuildInfo::GetInstance()->sdk_int(),
             base::android::SDK_VERSION_MARSHMALLOW);
 
@@ -200,6 +205,7 @@ bool GetCurrentDnsServers(std::vector<IPEndPoint>* dns_servers,
     return false;
   return GetDnsServersInternal(env, result, dns_servers, dns_over_tls_active,
                                dns_over_tls_hostname, search_suffixes);
+#endif
 }
 
 bool GetDnsServersForNetwork(std::vector<IPEndPoint>* dns_servers,

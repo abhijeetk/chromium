@@ -20,6 +20,7 @@
 #include "ui/display/display.h"
 #include "ui/gfx/display_color_spaces.h"
 #include "ui/gfx/icc_profile.h"
+#include "build/blink_buildflags.h"
 
 namespace ui {
 
@@ -37,7 +38,24 @@ void SetScreenAndroid(bool use_display_wide_color_gamut) {
   display::Screen::SetScreenInstance(manager);
 
   JNIEnv* env = AttachCurrentThread();
+#if BUILDFLAG(ANATIVE_BUILD)
+  // Java_DisplayAndroidManager_onNativeSideCreated internally calls
+  // SetPrimaryDisplayId and sets sdkDisplayId = 0;
+  manager->SetPrimaryDisplayId(env, nullptr, 0);
+  manager->UpdateDisplay(env, nullptr,
+                         /*sdkDisplayId :*/ 0,
+                         /*width :*/ 1080,
+                         /*height : */ 2408,
+                         /*dipScale : */ 2.8125,
+                         /*rotationDegrees : */ 0,
+                         /*bitsPerPixel : */ 24,
+                         /*bitsPerComponent : */ 8,
+                         /*isWideColorGamut : */ 0,
+                         /*isHdr : */ false,
+                         /*hdrMaxLuminanceRatio : */ 1);
+#else
   Java_DisplayAndroidManager_onNativeSideCreated(env, (jlong)manager);
+#endif
 }
 
 DisplayAndroidManager::DisplayAndroidManager(bool use_display_wide_color_gamut)

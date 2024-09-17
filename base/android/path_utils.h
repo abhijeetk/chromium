@@ -9,6 +9,11 @@
 #include <vector>
 
 #include "base/base_export.h"
+#include "build/blink_buildflags.h"
+
+#if BUILDFLAG(ANATIVE_BUILD)
+BASE_EXPORT extern struct android_app* g_app_state;
+#endif
 
 namespace base {
 

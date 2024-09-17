@@ -18,6 +18,7 @@
 #include "base/threading/platform_thread_internal_posix.h"
 #include "base/threading/thread_id_name_manager.h"
 #include "base/threading/thread_restrictions.h"
+#include "build/blink_buildflags.h"
 
 using base::android::AttachCurrentThread;
 
@@ -27,12 +28,18 @@ namespace android {
 
 JavaHandlerThread::JavaHandlerThread(const char* name,
                                      base::ThreadType thread_type)
+#if !BUILDFLAG(ANATIVE_BUILD)
     : JavaHandlerThread(
           name,
           Java_JavaHandlerThread_create(
               AttachCurrentThread(),
               ConvertUTF8ToJavaString(AttachCurrentThread(), name),
-              base::internal::ThreadTypeToNiceValue(thread_type))) {}
+              base::internal::ThreadTypeToNiceValue(thread_type)))
+#else
+    : JavaHandlerThread(name, nullptr)
+#endif
+{
+}
 
 JavaHandlerThread::JavaHandlerThread(
     const char* name,

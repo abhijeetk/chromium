@@ -29,6 +29,7 @@ import("//build/config/chromeos/ui_mode.gni")
 import("//build/config/compiler/compiler.gni")
 import("//build/config/cronet/config.gni")
 import("//build/config/dcheck_always_on.gni")
+import("//build/config/features.gni")
 import("//build/config/ios/config.gni")
 import("//build/config/logging.gni")
 import("//build/config/nacl/config.gni")
@@ -1274,6 +1275,13 @@ component("base") {
       "process/process_metrics_linux.cc",
       "system/sys_info_linux.cc",
     ]
+
+    if (anative_build) {
+      if (!defined(include_dirs)) {
+        include_dirs = []
+      }
+      include_dirs += [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+    }
 
     deps += [
       ":base_jni",

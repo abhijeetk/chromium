@@ -15,6 +15,7 @@
 #include "base/debug/dump_without_crashing.h"
 #include "base/functional/callback.h"
 #include "base/functional/callback_helpers.h"
+#include "build/blink_buildflags.h"
 #include "content/browser/android/additional_navigation_params_utils.h"
 #include "content/browser/renderer_host/navigation_controller_impl.h"
 #include "content/browser/renderer_host/navigation_entry_impl.h"
@@ -126,9 +127,13 @@ NavigationControllerAndroid::NavigationControllerAndroid(
     NavigationControllerImpl* navigation_controller)
     : navigation_controller_(navigation_controller) {
   JNIEnv* env = AttachCurrentThread();
+#if BUILDFLAG(ANATIVE_BUILD)
+  obj_.Reset(env, nullptr);
+#else
   obj_.Reset(env, Java_NavigationControllerImpl_create(
                       env, reinterpret_cast<intptr_t>(this))
                       .obj());
+#endif
 }
 
 NavigationControllerAndroid::~NavigationControllerAndroid() {

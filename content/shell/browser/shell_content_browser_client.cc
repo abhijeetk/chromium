@@ -27,6 +27,7 @@
 #include "base/strings/string_split.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/sequence_local_storage_slot.h"
+#include "build/blink_buildflags.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
 #include "cc/base/switches.h"
@@ -293,8 +294,12 @@ std::unique_ptr<PrefService> CreateLocalState() {
   metrics::MetricsService::RegisterPrefs(pref_registry.get());
   variations::VariationsService::RegisterPrefs(pref_registry.get());
 
+#if BUILDFLAG(ANATIVE_BUILD)
+  base::FilePath path("/data/user/0/com.example.myapp/files");
+#else
   base::FilePath path;
   CHECK(base::PathService::Get(SHELL_DIR_USER_DATA, &path));
+#endif
   path = path.AppendASCII("Local State");
 
   PrefServiceFactory pref_service_factory;

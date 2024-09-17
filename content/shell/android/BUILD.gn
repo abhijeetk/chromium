@@ -9,8 +9,6 @@ import("//third_party/jni_zero/jni_zero.gni")
 
 content_shell_manifest =
     "$target_gen_dir/content_shell_manifest/AndroidManifest.xml"
-content_shell_manifest_abhijeet =
-    "$target_gen_dir/content_shell_manifest_abhijeet/AndroidManifest.xml"
 content_shell_test_manifest =
     "$target_gen_dir/content_shell_test_manifest/AndroidManifest.xml"
 
@@ -113,12 +111,6 @@ jinja_template("content_shell_manifest") {
   input = "shell_apk/AndroidManifest.xml.jinja2"
   output = content_shell_manifest
   variables = [ "manifest_package=org.chromium.content_shell_apk" ]
-}
-
-jinja_template("content_shell_manifest_abhijeet") {
-  testonly = true
-  input = "shell_apk/AndroidManifestAbhijeet.xml.jinja2"
-  output = content_shell_manifest_abhijeet
 }
 
 jinja_template("content_shell_test_manifest") {
@@ -226,79 +218,85 @@ content_shell_apk_tmpl("content_shell_apk") {
   command_line_flags_file = "content-shell-command-line"
 }
 
-# Include the static library for native app glue.
-static_library("android_native_app_glue_abhijeet") {
-  sources = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue/android_native_app_glue.c",
-  ]
+if (anative_build) {
+  content_shell_manifest_anative =
+      "$target_gen_dir/content_shell_manifest_anative/AndroidManifest.xml"
 
-  include_dirs = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
-  ]
-}
-
-# Define the shared library for the native code.
-shared_library("native_activity") {
-  testonly = true
-  sources = [
-    "main_abhijeet.cc",
-  ]
-
-  include_dirs = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
-  ]
-
-  configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
-
-  ldflags = [
-    "-Wl,--verbose",
-    "-Wl,--export-dynamic",
-  ]
-
-  # Suppress error for use of raw ptr
-  cflags = [
-    "-Xclang",
-    "-plugin-arg-find-bad-constructs",
-    "-Xclang",
-    "raw-ptr-exclude-path=content/shell/android/main_abhijeet.cc",
-  ]
-
-  # disable errors for "is deprecated: first deprecated in Android 26"
-  cflags += [ "-Wno-deprecated-declarations" ]
-
-  libs = [
-    "log",
-    "android",
-    "EGL",
-    "GLESv1_CM",
-  ]
-
-  deps = [
-    ":android_native_app_glue_abhijeet",
-  ]
-}
-
-template("content_shell_apk_tmpl_abhijeet") {
-  _target_type = invoker.target_type
-  target(_target_type, target_name) {
-    forward_variables_from(invoker, "*")
+  jinja_template("content_shell_manifest_anative") {
     testonly = true
-    if (!defined(deps)) {
-      deps = []
-    }
-    deps += [
-
-    ]
-    loadable_modules = []
+    input = "shell_apk/AndroidManifestAbhijeet.xml.jinja2"
+    output = content_shell_manifest_anative
   }
-}
 
-content_shell_apk_tmpl_abhijeet("content_shell_apk_abhijeet") {
-  target_type = "android_apk"
-  apk_name = "ContentShellAbhijeet"
-  android_manifest = content_shell_manifest_abhijeet
-  android_manifest_dep = ":content_shell_manifest_abhijeet"
-  shared_libraries = [ ":native_activity" ]
+  # Include the static library for native app glue.
+  static_library("android_native_app_glue_anative") {
+    sources = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue/android_native_app_glue.c" ]
+
+    include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+  }
+
+  # Define the shared library for the native code.
+  # ABHIJEET : This is equivalent to libcontent_shell_content_view target. Both are shared libs.
+  shared_library("native_activity") {
+    testonly = true
+
+    sources = [ "main.cc" ]
+
+    include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+
+    # On Android, to export all symbols from a shared library, we need to remove symbol hiding.
+    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+
+    # Suppress error for use of raw ptr
+    cflags = [
+      "-Xclang",
+      "-plugin-arg-find-bad-constructs",
+      "-Xclang",
+      "raw-ptr-exclude-path=content/shell/android/main.cc",
+    ]
+
+    # disable errors for "is deprecated: first deprecated in Android 26"
+    cflags += [ "-Wno-deprecated-declarations" ]
+
+    libs = [
+      "log",
+      "android",
+      "EGL",
+      "GLESv1_CM",
+    ]
+
+    deps = [
+      ":android_native_app_glue_anative",
+      "//base:base",
+      "//components/crash/content/browser",
+      "//content/shell:content_shell_app",
+      "//content/shell:content_shell_lib",
+      "//content/shell:pak",
+      "//media",
+      "//skia",
+    ]
+  }
+
+  template("content_shell_apk_tmpl_anative") {
+    _target_type = invoker.target_type
+    target(_target_type, target_name) {
+      forward_variables_from(invoker, "*")
+      testonly = true
+      if (!defined(deps)) {
+        deps = []
+      }
+      deps += [ ":content_shell_assets" ]
+      loadable_modules = []
+    }
+  }
+
+  content_shell_apk_tmpl_anative("content_shell_apk_anative") {
+    target_type = "android_apk"
+    apk_name = "ContentShellAbhijeet"
+    android_manifest = content_shell_manifest_anative
+    android_manifest_dep = ":content_shell_manifest_anative"
+    shared_libraries = [ ":native_activity" ]
+  }
 }
 
 content_shell_apk_tmpl("content_shell_test_apk") {

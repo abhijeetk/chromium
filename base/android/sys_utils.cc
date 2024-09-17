@@ -11,18 +11,27 @@
 #include "base/process/process_metrics.h"
 #include "base/system/sys_info.h"
 #include "base/trace_event/base_tracing.h"
+#include "build/blink_buildflags.h"
 
 namespace base {
 namespace android {
 
 bool SysUtils::IsLowEndDeviceFromJni() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  return false;
+#else
   JNIEnv* env = AttachCurrentThread();
   return Java_SysUtils_isLowEndDevice(env);
+#endif
 }
 
 bool SysUtils::IsCurrentlyLowMemory() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  return false;
+#else
   JNIEnv* env = AttachCurrentThread();
   return Java_SysUtils_isCurrentlyLowMemory(env);
+#endif
 }
 
 // static

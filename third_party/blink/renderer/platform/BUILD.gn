@@ -1588,6 +1588,14 @@ component("platform") {
     "windows_keyboard_codes.h",
   ]
 
+  if (anative_build) {
+    if (!defined(include_dirs)) {
+      include_dirs = []
+    }
+
+    include_dirs += [ "../../third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+  }
+
   sources -= blink_platform_avx_files
 
   # Add in the generated files.

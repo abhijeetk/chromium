@@ -19,6 +19,7 @@
 #include "base/path_service.h"
 #include "base/process/current_process.h"
 #include "base/trace_event/trace_log.h"
+#include "build/blink_buildflags.h"
 #include "build/build_config.h"
 #include "components/crash/core/common/crash_key.h"
 #include "components/memory_system/initializer.h"
@@ -255,11 +256,25 @@ std::optional<int> ShellMainDelegate::BasicStartupComplete() {
 }
 
 bool ShellMainDelegate::ShouldCreateFeatureList(InvokedIn invoked_in) {
-  return absl::holds_alternative<InvokedInChildProcess>(invoked_in);
+#if BUILDFLAG(ANATIVE_BUILD)
+  return true;
+#else
+  // TODO(abhijeet) : We are returning same value as our experiemt just to check
+  // content_shell is working.
+  // return absl::holds_alternative<InvokedInChildProcess>(invoked_in);
+  return true;
+#endif
 }
 
 bool ShellMainDelegate::ShouldInitializeMojo(InvokedIn invoked_in) {
-  return ShouldCreateFeatureList(invoked_in);
+#if BUILDFLAG(ANATIVE_BUILD)
+  return true;
+#else
+  // TODO(abhijeet) : We are returning same value as our experiemt just to check
+  // content_shell is working.
+  // return ShouldCreateFeatureList(invoked_in);
+  return true;
+#endif
 }
 
 void ShellMainDelegate::PreSandboxStartup() {
@@ -417,13 +432,23 @@ std::optional<int> ShellMainDelegate::PreBrowserMain() {
 
 std::optional<int> ShellMainDelegate::PostEarlyInitialization(
     InvokedIn invoked_in) {
-  if (!ShouldCreateFeatureList(invoked_in)) {
-    // Apply field trial testing configuration since content did not.
-    browser_client_->CreateFeatureListAndFieldTrials();
-  }
-  if (!ShouldInitializeMojo(invoked_in)) {
-    InitializeMojoCore();
-  }
+#if BUILDFLAG(ANATIVE_BUILD)
+  content::InitializeMojoCore();
+  return std::nullopt;
+#else
+  // TODO(abhijeet) : We are returning same value as our experiemt just to check
+  // content_shell is working.
+  // if (!ShouldCreateFeatureList(invoked_in)) {
+  //   browser_client_->CreateFeatureListAndFieldTrials();
+  // }
+  // if (!ShouldInitializeMojo(invoked_in)) {
+  //  Since we've told Content not to initialize Mojo on its own, we must do it
+  //  here manually.
+  content::InitializeMojoCore();
+  //}
+  return std::nullopt;
+
+#endif
 
   const std::string process_type =
       base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(

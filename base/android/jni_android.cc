@@ -15,6 +15,7 @@
 #include "base/debug/debugging_buildflags.h"
 #include "base/feature_list.h"
 #include "base/logging.h"
+#include "build/blink_buildflags.h"
 #include "build/build_config.h"
 #include "build/robolectric_buildflags.h"
 #include "third_party/abseil-cpp/absl/base/attributes.h"
@@ -93,12 +94,16 @@ void InitVM(JavaVM* vm) {
   jni_zero::InitVM(vm);
   jni_zero::SetExceptionHandler(CheckException);
   JNIEnv* env = jni_zero::AttachCurrentThread();
+#if BUILDFLAG(ANATIVE_BUILD)
+  LOG(ERROR) << "Don't need to load java classes";
+#else
 #if !BUILDFLAG(IS_ROBOLECTRIC)
   // Warm-up needed for GetClassFromSplit, must be called before we set the
   // resolver, since GetClassFromSplit won't work until after
   // PrepareClassLoaders has happened.
   PrepareClassLoaders(env);
   jni_zero::SetClassResolver(GetClassFromSplit);
+#endif
 #endif
   g_out_of_memory_error_class = static_cast<jclass>(
       env->NewGlobalRef(env->FindClass("java/lang/OutOfMemoryError")));

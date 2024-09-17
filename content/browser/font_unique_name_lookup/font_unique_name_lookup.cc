@@ -16,6 +16,7 @@
 #include "base/task/sequenced_task_runner.h"
 #include "base/task/thread_pool.h"
 #include "base/trace_event/trace_event.h"
+#include "build/blink_buildflags.h"
 #include "third_party/blink/public/common/font_unique_name_lookup/font_table_matcher.h"
 #include "third_party/blink/public/common/font_unique_name_lookup/font_table_persistence.h"
 #include "third_party/blink/public/common/font_unique_name_lookup/font_unique_name_table.pb.h"
@@ -26,6 +27,12 @@
 #include "third_party/icu/source/common/unicode/unistr.h"
 
 #include FT_TRUETYPE_IDS_H
+
+#if BUILDFLAG(ANATIVE_BUILD)
+#include <android_native_app_glue.h>
+
+struct android_app* g_app_state = nullptr;
+#endif
 
 namespace {
 
@@ -182,9 +189,23 @@ class PlatformFontUniqueNameLookup : public FontUniqueNameLookup {
 
  private:
   static base::FilePath GetCacheDirectory() {
+#if BUILDFLAG(ANATIVE_BUILD)
+    if (g_app_state) {
+      std::string internalDataPath =
+          g_app_state->activity
+              ->internalDataPath;  // This is
+                                   // /data/user/0/com.example.myapp/files
+      std::string cacheDir =
+          internalDataPath.substr(0, internalDataPath.find_last_of('/')) +
+          "/cache";
+      return base::FilePath(cacheDir);
+    }
+    return base::FilePath();
+#else
     base::FilePath cache_directory;
     base::PathService::Get(base::DIR_CACHE, &cache_directory);
     return cache_directory;
+#endif
   }
 };
 
