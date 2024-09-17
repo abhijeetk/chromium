@@ -14,6 +14,7 @@
 #include "base/memory/singleton.h"
 #include "base/notreached.h"
 #include "base/strings/string_number_conversions.h"
+#include "build/blink_buildflags.h"
 
 namespace base {
 namespace android {
@@ -36,10 +37,47 @@ int GetIntParam(const std::vector<std::string>& params, size_t index) {
 
 struct BuildInfoSingletonTraits {
   static BuildInfo* New() {
+    std::vector<std::string> params;
+#if !BUILDFLAG(ANATIVE_BUILD)
     JNIEnv* env = AttachCurrentThread();
     ScopedJavaLocalRef<jobjectArray> params_objs = Java_BuildInfo_getAll(env);
-    std::vector<std::string> params;
     AppendJavaStringArrayToStringVector(env, params_objs, &params);
+#else
+    params.push_back("samsung");
+    params.push_back("m14x");
+    params.push_back("UP1A.231005.007");
+    params.push_back("samsung");
+    params.push_back("SM-M146B");
+    params.push_back("34");
+    params.push_back("user");
+    params.push_back("s5e8535");
+    params.push_back("org.chromium.content_shell_apk");
+    params.push_back("1");
+    params.push_back("Content Shell");
+    params.push_back("org.chromium.content_shell_apk");
+    params.push_back("1");
+    params.push_back("Developer Build");
+    params.push_back(
+        "samsung/m14xnnxx/m14x:14/UP1A.231005.007/M146BXXS6CXH1:user/"
+        "release-keys");
+    params.push_back("243433038");
+    params.push_back("");
+    params.push_back("arm64-v8a, armeabi-v7a, armeabi");
+    params.push_back("false");
+    params.push_back("Not Enabled");
+    params.push_back("34");
+    params.push_back("0");
+    params.push_back("0");
+    params.push_back("M146BXXS6CXH1");
+    params.push_back("s5e8535");
+    params.push_back("1");
+    params.push_back("0");
+    params.push_back("1");
+    params.push_back("1");
+    params.push_back("REL");
+    params.push_back("132514561");
+    params.push_back("0");
+#endif
     return new BuildInfo(params);
   }
 

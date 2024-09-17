@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "build/chromecast_buildflags.h"
 #include "components/tracing/common/tracing_switches.h"
+#include "build/blink_buildflags.h"
 
 #if BUILDFLAG(IS_ANDROID)
 #include "base/android/build_info.h"  // nogncheck
@@ -45,6 +46,9 @@ BASE_FEATURE(kEnablePerfettoSystemTracing,
 namespace tracing {
 
 bool ShouldSetupSystemTracing() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  return false;
+#else
 #if BUILDFLAG(IS_ANDROID)
   if (base::android::BuildInfo::GetInstance()->is_debug_android()) {
     return true;
@@ -55,6 +59,7 @@ bool ShouldSetupSystemTracing() {
   }
   return features::kEnablePerfettoSystemTracing.default_state ==
          base::FEATURE_ENABLED_BY_DEFAULT;
+#endif
 }
 
 }  // namespace tracing

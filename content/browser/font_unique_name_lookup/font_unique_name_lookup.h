@@ -9,6 +9,7 @@
 #include "base/memory/read_only_shared_memory_region.h"
 #include "base/synchronization/waitable_event.h"
 #include "base/task/sequenced_task_runner.h"
+#include "build/blink_buildflags.h"
 #include "content/common/content_export.h"
 #include "third_party/blink/public/mojom/font_unique_name_lookup/font_unique_name_lookup.mojom.h"
 
@@ -18,6 +19,10 @@
 #include FT_SFNT_NAMES_H
 
 #include <string>
+
+#if BUILDFLAG(ANATIVE_BUILD)
+CONTENT_EXPORT extern struct android_app* g_app_state;
+#endif
 
 namespace content {
 

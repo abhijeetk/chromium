@@ -815,8 +815,9 @@ int ContentMainRunnerImpl::Initialize(ContentMainParams params) {
   // this point (because AtExitManager is already set up when the library is
   // loaded). Other platforms enable tracing below, after the initialization of
   // AtExitManager.
+#if !BUILDFLAG(ANATIVE_BUILD)
   tracing::EnableStartupTracingIfNeeded();
-
+#endif
   TRACE_EVENT0("startup,benchmark,rail", "ContentMainRunnerImpl::Initialize");
 #endif  // BUILDFLAG(IS_ANDROID)
 
@@ -1237,7 +1238,7 @@ int ContentMainRunnerImpl::RunBrowser(MainFunctionParams main_params,
         ->SetAllowSystemTracingConsumerCallback(
             base::BindRepeating(&ShouldAllowSystemTracingConsumer));
     tracing::InitTracingPostThreadPoolStartAndFeatureList(
-        /* enable_consumer */ true);
+        /* enable_consumer */ false);
 
     // PowerMonitor is needed in reduced mode. BrowserMainLoop will safely skip
     // initializing it again if it has already been initialized.
@@ -1273,7 +1274,9 @@ int ContentMainRunnerImpl::RunBrowser(MainFunctionParams main_params,
 
     download::SetIOTaskRunner(mojo_ipc_support_->io_thread()->task_runner());
 
+#if !BUILDFLAG(ANATIVE_BUILD)
     InitializeBrowserMemoryInstrumentationClient();
+#endif
 
 #if BUILDFLAG(IS_ANDROID)
     if (start_minimal_browser) {

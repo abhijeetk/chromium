@@ -12,6 +12,7 @@
 #include "base/containers/contains.h"
 #include "base/notreached.h"
 #include "base/strings/string_piece.h"
+#include "build/blink_buildflags.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
@@ -47,8 +48,11 @@ void ShellPlatformDelegate::CreatePlatformWindow(
     const gfx::Size& initial_size) {
   DCHECK(!base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
-
+#if BUILDFLAG(ANATIVE_BUILD)
+  shell_data.java_object.Reset(nullptr);
+#else
   shell_data.java_object.Reset(CreateShellView(shell));
+#endif
 }
 
 void ShellPlatformDelegate::CleanUp(Shell* shell) {

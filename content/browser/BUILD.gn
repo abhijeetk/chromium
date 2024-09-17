@@ -3193,6 +3193,16 @@ source_set("browser") {
       "webid/digital_credentials/digital_identity_provider_android.h",
     ]
 
+    if (anative_build) {
+      if (!defined(include_dirs)) {
+        include_dirs = []
+      }
+
+      if (anative_build) {
+        include_dirs += [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+      }
+    }
+
     deps += [
       ":reflection_jni_headers",
       "//build/config/freetype",

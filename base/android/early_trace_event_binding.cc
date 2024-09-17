@@ -12,6 +12,7 @@
 #include "base/time/time.h"
 #include "base/trace_event/base_tracing.h"
 #include "base/tracing_buildflags.h"
+#include "build/blink_buildflags.h"
 
 namespace base {
 namespace android {
@@ -120,9 +121,13 @@ static void JNI_EarlyTraceEvent_RecordEarlyAsyncEndEvent(JNIEnv* env,
 }
 
 bool GetBackgroundStartupTracingFlag() {
+#if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = jni_zero::AttachCurrentThread();
   return base::android::Java_EarlyTraceEvent_getBackgroundStartupTracingFlag(
       env);
+#else
+  return false;
+#endif
 }
 
 void SetBackgroundStartupTracingFlag(bool enabled) {

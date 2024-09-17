@@ -12,6 +12,7 @@
 #include "base/metrics/user_metrics.h"
 #include "base/observer_list_threadsafe.h"
 #include "base/trace_event/base_tracing.h"
+#include "build/blink_buildflags.h"
 
 #if BUILDFLAG(ENABLE_BASE_TRACING)
 #include "base/trace_event/application_state_proto_android.h"  // no-presubmit-check
@@ -48,9 +49,10 @@ class ApplicationStatusListenerImpl : public ApplicationStatusListener {
       const ApplicationStateChangeCallback& callback) {
     SetCallback(callback);
     g_observers.Get().AddObserver(this);
-
+#if !BUILDFLAG(ANATIVE_BUILD)
     Java_ApplicationStatus_registerThreadSafeNativeApplicationStateListener(
         AttachCurrentThread());
+#endif
   }
 
   ~ApplicationStatusListenerImpl() override {

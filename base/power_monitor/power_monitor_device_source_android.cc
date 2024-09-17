@@ -7,6 +7,7 @@
 #include "base/power_monitor/power_monitor_device_source.h"
 #include "base/power_monitor/power_monitor_source.h"
 #include "base/power_monitor/power_observer.h"
+#include "build/blink_buildflags.h"
 
 namespace base {
 
@@ -81,20 +82,32 @@ void JNI_PowerMonitor_OnThermalStatusChanged(JNIEnv* env, int thermal_status) {
 }  // namespace android
 
 bool PowerMonitorDeviceSource::IsOnBatteryPower() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  return false;
+#else
   JNIEnv* env = jni_zero::AttachCurrentThread();
   return base::android::Java_PowerMonitor_isBatteryPower(env);
+#endif
 }
 
 int PowerMonitorDeviceSource::GetRemainingBatteryCapacity() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  return 0;
+#else
   JNIEnv* env = jni_zero::AttachCurrentThread();
   return base::android::Java_PowerMonitor_getRemainingBatteryCapacity(env);
+#endif
 }
 
 PowerThermalObserver::DeviceThermalState
 PowerMonitorDeviceSource::GetCurrentThermalState() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  return PowerThermalObserver::DeviceThermalState::kNominal;
+#else
   JNIEnv* env = jni_zero::AttachCurrentThread();
   return android::MapToDeviceThermalState(
       android::Java_PowerMonitor_getCurrentThermalStatus(env));
+#endif
 }
 
 }  // namespace base
