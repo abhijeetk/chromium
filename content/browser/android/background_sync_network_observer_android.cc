@@ -6,6 +6,7 @@
 
 #include "base/functional/bind.h"
 #include "base/trace_event/trace_event.h"
+#include "build/blink_buildflags.h"
 #include "content/public/android/content_jni_headers/BackgroundSyncNetworkObserver_jni.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/service_worker_context.h"
@@ -28,11 +29,15 @@ void BackgroundSyncNetworkObserverAndroid::Observer::Init() {
   TRACE_EVENT0("startup",
                "BackgroundSyncNetworkObserverAndroid::Observer::Init");
   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+#if !BUILDFLAG(ANATIVE_BUILD)
   // Attach a Java BackgroundSyncNetworkObserver object. Its lifetime will be
   // scoped to the lifetime of this object.
   JNIEnv* env = base::android::AttachCurrentThread();
   j_observer_ = Java_BackgroundSyncNetworkObserver_createObserver(
       env, reinterpret_cast<jlong>(this));
+#else
+  j_observer_ = nullptr;
+#endif
 }
 
 BackgroundSyncNetworkObserverAndroid::Observer::~Observer() {

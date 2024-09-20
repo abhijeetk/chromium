@@ -37,11 +37,16 @@ namespace net::android {
 
 std::vector<std::string> GetUserAddedRoots() {
   std::vector<std::string> roots;
+#if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
 
   ScopedJavaLocalRef<jobjectArray> roots_byte_array =
       Java_AndroidNetworkLibrary_getUserAddedRoots(env);
   JavaArrayOfByteArrayToStringVector(env, roots_byte_array, &roots);
+#else
+  LOG(ERROR) << "TODO(abhijeet) : Impmenet " << __FUNCTION__
+             << " for ANative Build";
+#endif
   return roots;
 }
 

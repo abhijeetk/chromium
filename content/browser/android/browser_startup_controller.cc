@@ -16,8 +16,13 @@ using base::android::JavaParamRef;
 namespace content {
 
 void BrowserStartupComplete(int result) {
+#if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_BrowserStartupControllerImpl_browserStartupComplete(env, result);
+#else
+  LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__
+             << " for Android Native build";
+#endif
 }
 
 void MinimalBrowserStartupComplete() {

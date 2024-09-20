@@ -109,8 +109,13 @@ void ApplicationStatusListener::NotifyApplicationStateChange(
 
 // static
 ApplicationState ApplicationStatusListener::GetState() {
+#if !BUILDFLAG(ANATIVE_BUILD)
   return static_cast<ApplicationState>(
       Java_ApplicationStatus_getStateForApplication(AttachCurrentThread()));
+#else
+  return static_cast<ApplicationState>(
+      APPLICATION_STATE_HAS_RUNNING_ACTIVITIES);
+#endif
 }
 
 static void JNI_ApplicationStatus_OnApplicationStateChange(
