@@ -6,6 +6,7 @@ package org.chromium.content_shell;
 
 import android.graphics.Bitmap;
 import android.view.ViewGroup;
+import org.chromium.base.Log;
 
 import org.chromium.ui.base.ViewAndroidDelegate;
 import org.chromium.ui.mojom.CursorType;
@@ -31,6 +32,7 @@ public class ShellViewAndroidDelegate extends ViewAndroidDelegate {
 
     public ShellViewAndroidDelegate(ViewGroup containerView) {
         super(containerView);
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
     }
 
     public void setOnCursorUpdateHelper(OnCursorUpdateHelper helper) {

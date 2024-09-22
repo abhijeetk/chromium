@@ -188,6 +188,8 @@ DataPack::~DataPack() {
 // static
 std::unique_ptr<DataPack::DataSource> DataPack::LoadFromPathInternal(
     const base::FilePath& path) {
+  LOG(ERROR) << path.value();
+  CHECK(false);
   std::unique_ptr<base::MemoryMappedFile> mmap =
       std::make_unique<base::MemoryMappedFile>();
   // Open the file for reading; allowing other consumers to also open it for

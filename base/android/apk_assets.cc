@@ -15,8 +15,8 @@
 #include "base/file_descriptor_store.h"
 
 #if BUILDFLAG(ANATIVE_BUILD)
-#include <android/asset_manager.h>
 #include "base/android/android_app_state.h"
+#include <android/asset_manager.h>
 #include "base/logging.h"
 #endif
 
@@ -27,10 +27,13 @@ int OpenApkAsset(const std::string& file_path_input,
                  const std::string& split_name,
                  base::MemoryMappedFile::Region* region) {
   std::string file_path = file_path_input;
+  LOG(ERROR) << "<------------------------|||--------------------------->" << g_native_app_state;
 #if BUILDFLAG(ANATIVE_BUILD)
   if (!g_native_app_state) {
     return -1;
   }
+
+  LOG(ERROR) << "<------------------------|||--------------------------->";
   // Find the position of the substring and remove it
   std::string to_remove = "assets/";
   size_t pos = file_path.find(to_remove);

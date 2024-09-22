@@ -6,6 +6,7 @@ package org.chromium.content_shell;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import org.chromium.base.Log;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
@@ -34,6 +35,7 @@ public class ShellManager extends FrameLayout {
     /** Constructor for inflating via XML. */
     public ShellManager(final Context context, AttributeSet attrs) {
         super(context, attrs);
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         ShellManagerJni.get().init(this);
     }
 
@@ -41,6 +43,7 @@ public class ShellManager extends FrameLayout {
      * @param window The window used to generate all shells.
      */
     public void setWindow(WindowAndroid window) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         assert window != null;
         mWindow = window;
         mContentViewRenderView = new ContentViewRenderView(getContext());
@@ -51,16 +54,19 @@ public class ShellManager extends FrameLayout {
      * @return The window used to generate all shells.
      */
     public WindowAndroid getWindow() {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         return mWindow;
     }
 
     /** Get the ContentViewRenderView. */
     public ContentViewRenderView getContentViewRenderView() {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         return mContentViewRenderView;
     }
 
     /** Sets the startup URL for new shell windows. */
     public void setStartupUrl(String url) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         mStartupUrl = url;
     }
 
@@ -73,9 +79,11 @@ public class ShellManager extends FrameLayout {
 
     /**
      * Creates a new shell pointing to the specified URL.
+     *
      * @param url The URL the shell should load upon creation.
      */
     public void launchShell(String url) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         ThreadUtils.assertOnUiThread();
         Shell previousShell = mActiveShell;
         ShellManagerJni.get().launchShell(url);
@@ -85,6 +93,7 @@ public class ShellManager extends FrameLayout {
     @SuppressWarnings("unused")
     @CalledByNative
     private Object createShell(long nativeShellPtr) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         if (mContentViewRenderView == null) {
             mContentViewRenderView = new ContentViewRenderView(getContext());
             mContentViewRenderView.onNativeLibraryLoaded(mWindow);
@@ -102,6 +111,7 @@ public class ShellManager extends FrameLayout {
     }
 
     private void showShell(Shell shellView) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         shellView.setContentViewRenderView(mContentViewRenderView);
         addView(
                 shellView,

@@ -17,6 +17,7 @@
 #include "content/public/app/content_main_runner.h"
 #include "content/public/common/content_client.h"
 #include "content/shell/app/shell_main_delegate.h"
+#include "base/android/android_app_state.h"
 
 // START : TEST
 #include "base/files/memory_mapped_file.h"

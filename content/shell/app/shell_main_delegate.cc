@@ -8,6 +8,7 @@
 #include <tuple>
 #include <utility>
 
+#include "build/blink_buildflags.h"
 #include "base/base_paths.h"
 #include "base/base_switches.h"
 #include "base/command_line.h"
@@ -374,8 +375,19 @@ void ShellMainDelegate::ZygoteForked() {
 }
 #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
 
+#define XSTR(x) STR(x)
+#define STR(x) #x
+
 void ShellMainDelegate::InitializeResourceBundle() {
 #if BUILDFLAG(IS_ANDROID)
+#if 0 //BUILDFLAG(ANATIVE_BUILD)
+  base::FilePath pak_file;
+  pak_file = pak_file.Append(FILE_PATH_LITERAL("content_shell.pak"));
+  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+#else
+      //base::FilePath pak_file;
+      //bool r = base::PathService::Get(base::DIR_ASSETS, &pak_file);
+      //LOG(ERROR) << "base::DIR_ANDROID_APP_DATA : -----> " << base::DIR_ANDROID_APP_DATA << "\t" << pak_file;
   // On Android, the renderer runs with a different UID and can never access
   // the file system. Use the file descriptor passed in at launch time.
   auto* global_descriptors = base::GlobalDescriptors::GetInstance();
@@ -391,6 +403,8 @@ void ShellMainDelegate::InitializeResourceBundle() {
       base::FilePath pak_file;
       bool r = base::PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file);
       DCHECK(r);
+      LOG(ERROR) << "base::DIR_ANDROID_APP_DATA : -----> " << base::DIR_ANDROID_APP_DATA << "\t" << pak_file;
+      CHECK(false);
       pak_file = pak_file.Append(FILE_PATH_LITERAL("paks"));
       pak_file = pak_file.Append(FILE_PATH_LITERAL("content_shell.pak"));
       int flags = base::File::FLAG_OPEN | base::File::FLAG_READ;
@@ -408,6 +422,7 @@ void ShellMainDelegate::InitializeResourceBundle() {
       android_pak_file.Duplicate(), pak_region);
   ui::ResourceBundle::GetSharedInstance().AddDataPackFromFileRegion(
       std::move(android_pak_file), pak_region, ui::k100Percent);
+#endif
 #elif BUILDFLAG(IS_APPLE)
   ui::ResourceBundle::InitSharedInstanceWithPakPath(GetResourcesPakFilePath());
 #else

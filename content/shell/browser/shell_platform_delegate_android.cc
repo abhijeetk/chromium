@@ -41,6 +41,19 @@ struct ShellPlatformDelegate::PlatformData {};
 ShellPlatformDelegate::ShellPlatformDelegate() = default;
 
 void ShellPlatformDelegate::Initialize(const gfx::Size& default_window_size) {
+<<<<<<< HEAD
+=======
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  // base::debug::StackTrace().Print();
+  //  |platform_| is not used on this platform.
+}
+
+gfx::NativeWindow ShellPlatformDelegate::GetNativeWindow(Shell* shell) {
+  DCHECK(base::Contains(shell_data_map_, shell));
+  ShellData& shell_data = shell_data_map_[shell];
+
+  return gfx::NativeWindow(shell_data.window);
+>>>>>>> 5c556be9efb63 (Added dummy pthread for Graphics)
 }
 
 #if !BUILDFLAG(IS_ANDROID)
@@ -53,12 +66,16 @@ gfx::NativeWindow ShellPlatformDelegate::GetNativeWindow(Shell* shell) {
 #endif
 
 ShellPlatformDelegate::~ShellPlatformDelegate() {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   DestroyShellManager();
 }
 
 void ShellPlatformDelegate::CreatePlatformWindow(
     Shell* shell,
     const gfx::Size& initial_size) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__
+             << "\tinitial_size : " << initial_size.ToString();
+  // base::debug::StackTrace().Print();
   DCHECK(!base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
 #if BUILDFLAG(ANATIVE_BUILD)
@@ -70,6 +87,7 @@ void ShellPlatformDelegate::CreatePlatformWindow(
 }
 
 void ShellPlatformDelegate::CleanUp(Shell* shell) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -83,6 +101,12 @@ void ShellPlatformDelegate::CleanUp(Shell* shell) {
 }
 
 void ShellPlatformDelegate::SetContents(Shell* shell) {
+<<<<<<< HEAD
+=======
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  // base::debug::StackTrace().Print();
+  JNIEnv* env = AttachCurrentThread();
+>>>>>>> 5c556be9efb63 (Added dummy pthread for Graphics)
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
 
@@ -97,12 +121,14 @@ void ShellPlatformDelegate::SetContents(Shell* shell) {
 
 void ShellPlatformDelegate::ResizeWebContent(Shell* shell,
                                              const gfx::Size& content_size) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   shell->web_contents()->GetRenderWidgetHostView()->SetSize(content_size);
 }
 
 void ShellPlatformDelegate::EnableUIControl(Shell* shell,
                                             UIControl control,
                                             bool is_enabled) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -113,6 +139,7 @@ void ShellPlatformDelegate::EnableUIControl(Shell* shell,
 }
 
 void ShellPlatformDelegate::SetAddressBarURL(Shell* shell, const GURL& url) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -122,6 +149,7 @@ void ShellPlatformDelegate::SetAddressBarURL(Shell* shell, const GURL& url) {
 }
 
 void ShellPlatformDelegate::SetIsLoading(Shell* shell, bool loading) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -130,11 +158,16 @@ void ShellPlatformDelegate::SetIsLoading(Shell* shell, bool loading) {
 }
 
 void ShellPlatformDelegate::SetTitle(Shell* shell,
-                                     const std::u16string& title) {}
+                                     const std::u16string& title) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+}
 
-void ShellPlatformDelegate::MainFrameCreated(Shell* shell) {}
+void ShellPlatformDelegate::MainFrameCreated(Shell* shell) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+}
 
 bool ShellPlatformDelegate::DestroyShell(Shell* shell) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   return false;  // Shell destroys itself.
 }
 
@@ -142,6 +175,7 @@ void ShellPlatformDelegate::ToggleFullscreenModeForTab(
     Shell* shell,
     WebContents* web_contents,
     bool enter_fullscreen) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -153,6 +187,7 @@ void ShellPlatformDelegate::ToggleFullscreenModeForTab(
 bool ShellPlatformDelegate::IsFullscreenForTabOrPending(
     Shell* shell,
     const WebContents* web_contents) const {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   const ShellData& shell_data = shell_data_map_.find(shell)->second;
@@ -162,6 +197,7 @@ bool ShellPlatformDelegate::IsFullscreenForTabOrPending(
 
 void ShellPlatformDelegate::SetOverlayMode(Shell* shell,
                                            bool use_overlay_mode) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = base::android::AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -171,6 +207,7 @@ void ShellPlatformDelegate::SetOverlayMode(Shell* shell,
 }
 
 void ShellPlatformDelegate::LoadProgressChanged(Shell* shell, double progress) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -180,6 +217,7 @@ void ShellPlatformDelegate::LoadProgressChanged(Shell* shell, double progress) {
 
 // static
 void JNI_Shell_CloseShell(JNIEnv* env, jlong shellPtr) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   Shell* shell = reinterpret_cast<Shell*>(shellPtr);
   shell->Close();
 }
