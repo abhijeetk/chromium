@@ -16,10 +16,8 @@
 
 #if BUILDFLAG(ANATIVE_BUILD)
 #include <android/asset_manager.h>
-#include <android_native_app_glue.h>
+#include "base/android/android_app_state.h"
 #include "base/logging.h"
-
-struct android_app* g_app_state = nullptr;
 #endif
 
 namespace base {
@@ -30,7 +28,7 @@ int OpenApkAsset(const std::string& file_path_input,
                  base::MemoryMappedFile::Region* region) {
   std::string file_path = file_path_input;
 #if BUILDFLAG(ANATIVE_BUILD)
-  if (!g_app_state) {
+  if (!g_native_app_state) {
     return -1;
   }
   // Find the position of the substring and remove it
@@ -40,7 +38,7 @@ int OpenApkAsset(const std::string& file_path_input,
     file_path.erase(pos, to_remove.length());
   }
 
-  AAssetManager* asset_manager = g_app_state->activity->assetManager;
+  AAssetManager* asset_manager = g_native_app_state->activity->assetManager;
   // Open the asset
   AAsset* asset =
       AAssetManager_open(asset_manager, file_path.c_str(), AASSET_MODE_UNKNOWN);

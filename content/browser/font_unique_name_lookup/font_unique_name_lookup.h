@@ -20,10 +20,6 @@
 
 #include <string>
 
-#if BUILDFLAG(ANATIVE_BUILD)
-CONTENT_EXPORT extern struct android_app* g_app_state;
-#endif
-
 namespace content {
 
 // Scans a set of font files for the full font name and postscript name

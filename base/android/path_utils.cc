@@ -12,12 +12,16 @@
 
 #include "base/base_jni/PathUtils_jni.h"
 
+#if BUILDFLAG(ANATIVE_BUILD)
+#include "base/android/android_app_state.h"
+#endif
+
 namespace base {
 namespace android {
 
 bool GetDataDirectory(FilePath* result) {
 #if BUILDFLAG(ANATIVE_BUILD)
-  if (g_app_state) {
+  if (g_native_app_state) {
     FilePath data_path("/data/user/0/com.example.myapp/app_content_shell");
     *result = data_path;
     return true;
@@ -34,7 +38,7 @@ bool GetDataDirectory(FilePath* result) {
 
 bool GetCacheDirectory(FilePath* result) {
 #if BUILDFLAG(ANATIVE_BUILD)
-  if (g_app_state) {
+  if (g_native_app_state) {
     FilePath cache_path("/data/user/0/com.example.myapp/cache");
     *result = cache_path;
     return true;
@@ -93,7 +97,7 @@ std::vector<FilePath> GetSecondaryStorageDownloadDirectories() {
 
 bool GetNativeLibraryDirectory(FilePath* result) {
 #if BUILDFLAG(ANATIVE_BUILD)
-  if (g_app_state) {
+  if (g_native_app_state) {
     FilePath library_path(
         "/data/app/~~mCREp3eQwaHPrC8YoUD0sQ==/"
         "com.example.myapp-TVqioX1NN-6qFmT-8IJSOw==/lib/arm64");
