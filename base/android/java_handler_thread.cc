@@ -6,6 +6,7 @@
 
 #include <jni.h>
 
+#include <pthread.h>
 #include "base/android/jni_android.h"
 #include "base/android/jni_string.h"
 #include "base/base_jni/JavaHandlerThread_jni.h"
@@ -21,6 +22,16 @@
 #include "build/blink_buildflags.h"
 
 using base::android::AttachCurrentThread;
+
+// TODO(abhijeet): Eliminate global variables and implement a more robust
+// solution.
+base::android::JavaHandlerThread* class_ptr = nullptr;
+long event = 0;
+
+void* HandleMessage(void* input_data) {
+  class_ptr->InitializeThread(nullptr, event);
+  return nullptr;
+}
 
 namespace base {
 
@@ -70,9 +81,16 @@ void JavaHandlerThread::Start() {
   base::WaitableEvent initialize_event(
       WaitableEvent::ResetPolicy::AUTOMATIC,
       WaitableEvent::InitialState::NOT_SIGNALED);
+#if !BUILDFLAG(ANATIVE_BUILD)
   Java_JavaHandlerThread_startAndInitialize(
       env, java_thread_, reinterpret_cast<intptr_t>(this),
       reinterpret_cast<intptr_t>(&initialize_event));
+#else
+  class_ptr = this;
+  event = reinterpret_cast<intptr_t>(&initialize_event);
+  pthread_t thread;
+  pthread_create(&thread, nullptr, &HandleMessage, nullptr);
+#endif
   // Wait for thread to be initialized so it is ready to be used when Start
   // returns.
   base::ScopedAllowBaseSyncPrimitivesOutsideBlockingScope wait_allowed;
