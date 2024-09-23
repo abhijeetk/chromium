@@ -85,6 +85,12 @@ void android_main(android_app* state) {
   LOG(ERROR) << "vm : " << state->activity->vm;
   LOG(ERROR) << "sdkVersion : " << state->activity->sdkVersion;
 
+  
+  //LOG(ERROR) << "ANativeWindow_getWidth : " << ANativeWindow_getWidth(state->window);
+  //LOG(ERROR) << "\tANativeWindow_getHeight : " << ANativeWindow_getHeight(state->window);
+  LOG(ERROR) << "state->window : " << state->window;
+  LOG(ERROR) << "\tANativeWindow_getFormat : " << ANativeWindow_getFormat(state->window);
+
 #if 0
   AAssetManager* asset_manager = state->activity->assetManager;
   base::MemoryMappedFile::Region region;

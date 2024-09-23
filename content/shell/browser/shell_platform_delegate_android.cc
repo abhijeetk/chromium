@@ -41,19 +41,6 @@ struct ShellPlatformDelegate::PlatformData {};
 ShellPlatformDelegate::ShellPlatformDelegate() = default;
 
 void ShellPlatformDelegate::Initialize(const gfx::Size& default_window_size) {
-<<<<<<< HEAD
-=======
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
-  // base::debug::StackTrace().Print();
-  //  |platform_| is not used on this platform.
-}
-
-gfx::NativeWindow ShellPlatformDelegate::GetNativeWindow(Shell* shell) {
-  DCHECK(base::Contains(shell_data_map_, shell));
-  ShellData& shell_data = shell_data_map_[shell];
-
-  return gfx::NativeWindow(shell_data.window);
->>>>>>> 5c556be9efb63 (Added dummy pthread for Graphics)
 }
 
 #if !BUILDFLAG(IS_ANDROID)
@@ -101,17 +88,10 @@ void ShellPlatformDelegate::CleanUp(Shell* shell) {
 }
 
 void ShellPlatformDelegate::SetContents(Shell* shell) {
-<<<<<<< HEAD
-=======
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
-  // base::debug::StackTrace().Print();
-  JNIEnv* env = AttachCurrentThread();
->>>>>>> 5c556be9efb63 (Added dummy pthread for Graphics)
-  DCHECK(base::Contains(shell_data_map_, shell));
-  ShellData& shell_data = shell_data_map_[shell];
-
 #if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
+  DCHECK(base::Contains(shell_data_map_, shell));
+  ShellData& shell_data = shell_data_map_[shell];
   Java_Shell_initFromNativeTabContents(
       env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
 #else
