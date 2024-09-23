@@ -29,9 +29,7 @@
 #include FT_TRUETYPE_IDS_H
 
 #if BUILDFLAG(ANATIVE_BUILD)
-#include <android_native_app_glue.h>
-
-struct android_app* g_app_state = nullptr;
+#include "base/android/android_app_state.h"
 #endif
 
 namespace {
@@ -190,9 +188,9 @@ class PlatformFontUniqueNameLookup : public FontUniqueNameLookup {
  private:
   static base::FilePath GetCacheDirectory() {
 #if BUILDFLAG(ANATIVE_BUILD)
-    if (g_app_state) {
+    if (g_native_app_state) {
       std::string internalDataPath =
-          g_app_state->activity
+          g_native_app_state->activity
               ->internalDataPath;  // This is
                                    // /data/user/0/com.example.myapp/files
       std::string cacheDir =

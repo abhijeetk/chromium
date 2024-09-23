@@ -217,6 +217,13 @@ static_library("content_shell_lib") {
       "browser/shell_platform_delegate_android.cc",
       "browser/shell_web_contents_view_delegate_android.cc",
     ]
+
+    if (anative_build) {
+      if (!defined(include_dirs)) {
+        include_dirs = []
+      }
+      include_dirs += [ "../../third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+    }
   }
 
   if (is_mac) {

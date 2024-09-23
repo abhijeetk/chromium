@@ -5,6 +5,7 @@
  */
 #include <android_native_app_glue.h>
 
+#include "base/android/android_app_state.h"
 #include "base/command_line.h"
 #include "base/logging.h"
 #include "base/no_destructor.h"
@@ -16,8 +17,6 @@
 #include "content/public/app/content_main_runner.h"
 #include "content/public/common/content_client.h"
 #include "content/shell/app/shell_main_delegate.h"
-
-extern struct android_app* g_app_state;
 
 // START : TEST
 #include "base/files/memory_mapped_file.h"
@@ -76,7 +75,7 @@ ContentMainRunner* GetContentMainRunner() {
 }  // namespace content
 
 void android_main(android_app* state) {
-  g_app_state = state;
+  g_native_app_state = state;
 
   LOG(ERROR) << "externalDataPath : " << state->activity->externalDataPath;
   LOG(ERROR) << "internalDataPath : " << state->activity->internalDataPath;

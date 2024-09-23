@@ -1277,6 +1277,11 @@ component("base") {
     ]
 
     if (anative_build) {
+      sources += [
+        "android/android_app_state.cc",
+        "android/android_app_state.h",
+      ]
+
       if (!defined(include_dirs)) {
         include_dirs = []
       }
