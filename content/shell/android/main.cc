@@ -1,7 +1,18 @@
-/**
- * This is the main entry point of a native application that is using
- * android_native_app_glue.  It runs in its own thread, with its own
- * event loop for receiving input events and doing other things.
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
 #include <android_native_app_glue.h>
 
@@ -20,6 +31,13 @@
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>
+#include <android/choreographer.h>
+#include <android/log.h>
+#include <android/sensor.h>
+#include <android/set_abort_message.h>
+#include <android_native_app_glue.h>
+#include <jni.h>
+
 #include <cassert>
 #include <cerrno>
 #include <cstdlib>
@@ -38,22 +56,168 @@ ContentMainRunner* GetContentMainRunner() {
 }  // namespace
 }  // namespace content
 
-EGLDisplay display;
-EGLSurface surface;
-EGLContext context;
+#define LOG_TAG "native-activity"
 
-int32_t handle_input(android_app* app, AInputEvent* event) {
-  if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-    // Handle touch events
-    float x = AMotionEvent_getX(event, 0);
-    float y = AMotionEvent_getY(event, 0);
-    // Process the touch event (e.g., update object positions)
-    return 1;  // Event was handled
+#define _LOG(priority, fmt, ...)                    \
+  ((void)__android_log_print((priority), (LOG_TAG), \
+                             (fmt)__VA_OPT__(, ) __VA_ARGS__))
+
+#define LOGE(fmt, ...) _LOG(ANDROID_LOG_ERROR, (fmt)__VA_OPT__(, ) __VA_ARGS__)
+#define LOGW(fmt, ...) _LOG(ANDROID_LOG_WARN, (fmt)__VA_OPT__(, ) __VA_ARGS__)
+#define LOGI(fmt, ...) _LOG(ANDROID_LOG_INFO, (fmt)__VA_OPT__(, ) __VA_ARGS__)
+
+[[noreturn]] __attribute__((__format__(__printf__, 1, 2))) static void fatal(
+    const char* fmt,
+    ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  char* buf;
+  if (vasprintf(&buf, fmt, ap) < 0) {
+    android_set_abort_message("failed for format error message");
+  } else {
+    android_set_abort_message(buf);
+    // Also log directly, since the default Android Studio logcat filter hides
+    // the backtrace which would otherwise show the abort message.
+    LOGE("%s", buf);
   }
-  return 0;  // Event was not handled
+  std::abort();
 }
 
-void init_graphics(ANativeWindow* window) {
+#define CHECK_NOT_NULL(value)                                           \
+  do {                                                                  \
+    if ((value) == nullptr) {                                           \
+      fatal("%s:%d:%s must not be null", __PRETTY_FUNCTION__, __LINE__, \
+            #value);                                                    \
+    }                                                                   \
+  } while (false)
+
+/**
+ * Our saved state data.
+ */
+struct SavedState {
+  float angle;
+  int32_t x;
+  int32_t y;
+};
+
+/**
+ * Shared state for our app.
+ */
+struct Engine {
+  android_app* app;
+
+  ASensorManager* sensorManager;
+  const ASensor* accelerometerSensor;
+  ASensorEventQueue* sensorEventQueue;
+
+  EGLDisplay display;
+  EGLSurface surface;
+  EGLContext context;
+  int32_t width;
+  int32_t height;
+  SavedState state;
+
+  void CreateSensorListener(ALooper_callbackFunc callback) {
+    CHECK_NOT_NULL(app);
+
+    sensorManager = ASensorManager_getInstance();
+    if (sensorManager == nullptr) {
+      return;
+    }
+
+    accelerometerSensor = ASensorManager_getDefaultSensor(
+        sensorManager, ASENSOR_TYPE_ACCELEROMETER);
+    sensorEventQueue = ASensorManager_createEventQueue(
+        sensorManager, app->looper, ALOOPER_POLL_CALLBACK, callback, this);
+  }
+
+  /// Resumes ticking the application.
+  void Resume() {
+    // Checked to make sure we don't double schedule Choreographer.
+    if (!running_) {
+      running_ = true;
+      ScheduleNextTick();
+    }
+  }
+
+  /// Pauses ticking the application.
+  ///
+  /// When paused, sensor and input events will still be processed, but the
+  /// update and render parts of the loop will not run.
+  void Pause() { running_ = false; }
+
+ private:
+  bool running_;
+
+  void ScheduleNextTick() {
+    AChoreographer_postFrameCallback(AChoreographer_getInstance(), Tick, this);
+  }
+
+  /// Entry point for Choreographer.
+  ///
+  /// The first argument (the frame time) is not used as it is not needed for
+  /// this sample. If you copy from this sample and make use of that argument,
+  /// note that there's an API bug: that time is a signed 32-bit nanosecond
+  /// counter on 32-bit systems, so it will roll over every ~2 seconds. If your
+  /// minSdkVersion is 29 or higher, use AChoreographer_postFrameCallback64
+  /// instead, which is 64-bits for all architectures. Otherwise, bitwise-and
+  /// the value with the upper bits from CLOCK_MONOTONIC.
+  ///
+  /// \param data The Engine being ticked.
+  static void Tick(long, void* data) {
+    CHECK_NOT_NULL(data);
+    auto* engine = reinterpret_cast<Engine*>(data);
+    engine->DoTick();
+  }
+
+  void DoTick() {
+    if (!running_) {
+      return;
+    }
+
+    // Input and sensor feedback is handled via their own callbacks.
+    // Choreographer ensures that those callbacks run before this callback does.
+
+    // Choreographer does not continuously schedule the callback. We have to re-
+    // register the callback each time we're ticked.
+    ScheduleNextTick();
+    Update();
+    DrawFrame();
+  }
+
+  void Update() {
+    state.angle += .01f;
+    if (state.angle > 1) {
+      state.angle = 0;
+    }
+  }
+
+  void DrawFrame() {
+    if (display == nullptr) {
+      // No display.
+      return;
+    }
+
+    // Just fill the screen with a color.
+    glClearColor(((float)state.x) / width, state.angle,
+                 ((float)state.y) / height, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    eglSwapBuffers(display, surface);
+  }
+};
+
+/**
+ * Initialize an EGL context for the current display.
+ */
+static int engine_init_display(Engine* engine) {
+  // initialize OpenGL ES and EGL
+
+  /*
+   * Here specify the attributes of the desired configuration.
+   * Below, we select an EGLConfig with at least 8 bits per color
+   * component compatible with on-screen windows
+   */
   const EGLint attribs[] = {EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
                             EGL_BLUE_SIZE,    8,
                             EGL_GREEN_SIZE,   8,
@@ -96,8 +260,8 @@ void init_graphics(ANativeWindow* window) {
   }
 
   if (config == nullptr) {
-    LOG(ERROR) << "ABHIJEET : Unable to initialize EGLConfig";
-    return;
+    LOGW("Unable to initialize EGLConfig");
+    return -1;
   }
 
   /* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
@@ -105,7 +269,8 @@ void init_graphics(ANativeWindow* window) {
    * As soon as we picked a EGLConfig, we can safely reconfigure the
    * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
   eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-  surface = eglCreateWindowSurface(display, config, window, nullptr);
+  surface =
+      eglCreateWindowSurface(display, config, engine->app->window, nullptr);
 
   /* A version of OpenGL has not been specified here.  This will default to
    * OpenGL 1.0.  You will need to change this if you want to use the newer
@@ -113,24 +278,25 @@ void init_graphics(ANativeWindow* window) {
   context = eglCreateContext(display, config, nullptr, nullptr);
 
   if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-    LOG(ERROR) << "ABHIJEET : Unable to eglMakeCurrent";
-    return;
+    LOGW("Unable to eglMakeCurrent");
+    return -1;
   }
 
   eglQuerySurface(display, surface, EGL_WIDTH, &w);
   eglQuerySurface(display, surface, EGL_HEIGHT, &h);
 
-  LOG(ERROR) << "ABHIJEET : display : " << display << "\n"
-             << "context : " << context << "\n"
-             << "surface : " << surface << "\n"
-             << "w : " << w << "\n"
-             << "h : " << h << "\n";
+  engine->display = display;
+  engine->context = context;
+  engine->surface = surface;
+  engine->width = w;
+  engine->height = h;
+  engine->state.angle = 0;
 
   // Check openGL on the system
   auto opengl_info = {GL_VENDOR, GL_RENDERER, GL_VERSION, GL_EXTENSIONS};
   for (auto name : opengl_info) {
-    auto info = glGetString(name);
-    LOG(ERROR) << "ABHIJEET : OpenGL Info : " << info;
+    auto* info = glGetString(name);
+    LOGI("OpenGL Info: %s", info);
   }
   // Initialize GL state.
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -138,98 +304,82 @@ void init_graphics(ANativeWindow* window) {
   glShadeModel(GL_SMOOTH);
   glDisable(GL_DEPTH_TEST);
 
-  return;
-#if 0
-  // Initialize EGL (OpenGL ES) context and surface
-  display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  if (display == EGL_NO_DISPLAY) {
-    // Handle the error: Display is invalid
-    LOG(ERROR) << "ABHIJEET : Failed to get EGL display";
-    CHECK(false);
-  }
-
-  if (!eglInitialize(display, nullptr, nullptr)) {
-    // Handle the error: Failed to initialize EGL display
-    LOG(ERROR) << "ABHIJEET : Failed to initialize EGL display";
-    CHECK(false);
-  }
-
-  EGLConfig config;
-  EGLint numConfigs;
-  const EGLint configAttributes[] = {EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-                                     EGL_BLUE_SIZE,    8,
-                                     EGL_GREEN_SIZE,   8,
-                                     EGL_RED_SIZE,     8,
-                                     EGL_NONE};
-
-  eglChooseConfig(display, configAttributes, &config, 1, &numConfigs);
-
-  if (numConfigs == 0) {
-    LOG(ERROR) << "ABHIJEET : Failed to choose EGL config";
-    CHECK(false);
-    return;
-  }
-
-  LOG(ERROR) << "ABHIJEET : <------- numConfigs ----------> : " << numConfigs;
-
-  surface = eglCreateWindowSurface(display, config, window, nullptr);
-  if (surface == EGL_NO_SURFACE) {
-    LOG(ERROR) << "ABHIJEET : Failed to create EGL window surface";
-    CHECK(false);
-    return;
-  }
-
-  context = eglCreateContext(display, config, EGL_NO_CONTEXT, nullptr);
-  if (context == EGL_NO_CONTEXT) {
-    LOG(ERROR) << "ABHIJEET : Failed to create EGL context";
-    CHECK(false);
-    return;
-  }
-
-  if (!eglMakeCurrent(display, surface, surface, context)) {
-    LOG(ERROR) << "ABHIJEET : Failed to make EGL context current";
-    CHECK(false);
-    return;
-  }
-#endif
+  return 0;
 }
 
-void render() {
-  // LOG(ERROR) << "ABHIJEET : ABHIJEET :  : ";
-  // Clear the screen and set a background color
-  glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  // Draw your objects using OpenGL ES commands here
-
-  // Swap buffers to display the current frame
-  eglSwapBuffers(display, surface);
+/**
+ * Tear down the EGL context currently associated with the display.
+ */
+static void engine_term_display(Engine* engine) {
+  if (engine->display != EGL_NO_DISPLAY) {
+    eglMakeCurrent(engine->display, EGL_NO_SURFACE, EGL_NO_SURFACE,
+                   EGL_NO_CONTEXT);
+    if (engine->context != EGL_NO_CONTEXT) {
+      eglDestroyContext(engine->display, engine->context);
+    }
+    if (engine->surface != EGL_NO_SURFACE) {
+      eglDestroySurface(engine->display, engine->surface);
+    }
+    eglTerminate(engine->display);
+  }
+  engine->Pause();
+  engine->display = EGL_NO_DISPLAY;
+  engine->context = EGL_NO_CONTEXT;
+  engine->surface = EGL_NO_SURFACE;
 }
 
-void cleanup_graphics() {
-  eglDestroySurface(display, surface);
-  eglDestroyContext(display, context);
-  eglTerminate(display);
+/**
+ * Process the next input event.
+ */
+static int32_t engine_handle_input(android_app* app, AInputEvent* event) {
+  auto* engine = (Engine*)app->userData;
+  if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
+    engine->state.x = AMotionEvent_getX(event, 0);
+    engine->state.y = AMotionEvent_getY(event, 0);
+    return 1;
+  }
+  return 0;
 }
 
-void handle_cmd(android_app* app, int32_t cmd) {
+/**
+ * Process the next main command.
+ */
+static void engine_handle_cmd(android_app* app, int32_t cmd) {
+  auto* engine = (Engine*)app->userData;
   switch (cmd) {
+    case APP_CMD_SAVE_STATE:
+      // The system has asked us to save our current state.  Do so.
+      engine->app->savedState = malloc(sizeof(SavedState));
+      *((SavedState*)engine->app->savedState) = engine->state;
+      engine->app->savedStateSize = sizeof(SavedState);
+      break;
     case APP_CMD_INIT_WINDOW:
-      if (app->window != nullptr) {
-        LOG(ERROR) << "ABHIJEET : ABHIJEET : window : " << app->window
-                   << "\tg_native_app_state : " << g_native_app_state->window;
-        // Initialize graphics (e.g., OpenGL ES) and prepare to draw
-        init_graphics(app->window);
+      // The window is being shown, get it ready.
+      if (engine->app->window != nullptr) {
+        engine_init_display(engine);
+      }
 
-        LOG(ERROR) << "ABHIJEET : Abhijeet : externalDataPath : "
-                   << app->activity->externalDataPath;
-        LOG(ERROR) << "ABHIJEET : Abhijeet : internalDataPath : "
-                   << app->activity->internalDataPath;
-        LOG(ERROR) << "ABHIJEET : Abhijeet : assetManager : "
-                   << app->activity->assetManager;
-        LOG(ERROR) << "ABHIJEET : Abhijeet : env : " << app->activity->env;
-        LOG(ERROR) << "ABHIJEET : Abhijeet : vm : " << app->activity->vm;
-        LOG(ERROR) << "ABHIJEET : Abhijeet : sdkVersion : " << app->activity->sdkVersion;
+      if (app->window != nullptr) {
+        // LOG(ERROR) << "ABHIJEET : ABHIJEET : window : " << app->window
+        //           << "\tg_native_app_state : " << g_native_app_state->window;
+        // Initialize graphics (e.g., OpenGL ES) and prepare to draw
+        // init_graphics(app->window);
+
+        // LOG(ERROR) << "ABHIJEET : Abhijeet : externalDataPath : "
+        //           << app->activity->externalDataPath;
+        // LOG(ERROR) << "ABHIJEET : Abhijeet : internalDataPath : "
+        //           << app->activity->internalDataPath;
+        // LOG(ERROR) << "ABHIJEET : Abhijeet : assetManager : "
+        //           << app->activity->assetManager;
+        // LOG(ERROR) << "ABHIJEET : Abhijeet : env : " << app->activity->env;
+        // LOG(ERROR) << "ABHIJEET : Abhijeet : vm : " << app->activity->vm;
+        // LOG(ERROR) << "ABHIJEET : Abhijeet : sdkVersion : "
+        //           << app->activity->sdkVersion;
+
+        base::android::InitVM(app->activity->vm);
+        if (!content::android::OnJNIOnLoadInit()) {
+          return;
+        }
 
         content::ContentMainDelegate* delegate =
             new content::ShellMainDelegate();
@@ -250,49 +400,92 @@ void handle_cmd(android_app* app, int32_t cmd) {
       }
       break;
     case APP_CMD_TERM_WINDOW:
-      LOG(ERROR) << "ABHIJEET : ABHIJEET : window : " << app->window;
-      // Clean up resources when the window is closed
-      cleanup_graphics();
+      // The window is being hidden or closed, clean it up.
+      engine_term_display(engine);
       break;
-      // Handle other cases such as window resizing or pausing
+    case APP_CMD_GAINED_FOCUS:
+      // When our app gains focus, we start monitoring the accelerometer.
+      if (engine->accelerometerSensor != nullptr) {
+        ASensorEventQueue_enableSensor(engine->sensorEventQueue,
+                                       engine->accelerometerSensor);
+        // We'd like to get 60 events per second (in us).
+        ASensorEventQueue_setEventRate(engine->sensorEventQueue,
+                                       engine->accelerometerSensor,
+                                       (1000L / 60) * 1000);
+      }
+      engine->Resume();
+      break;
+    case APP_CMD_LOST_FOCUS:
+      // When our app loses focus, we stop monitoring the accelerometer.
+      // This is to avoid consuming battery while not being used.
+      if (engine->accelerometerSensor != nullptr) {
+        ASensorEventQueue_disableSensor(engine->sensorEventQueue,
+                                        engine->accelerometerSensor);
+      }
+      engine->Pause();
+      break;
+    default:
+      break;
   }
 }
 
-void android_main(android_app* app) {
-  g_native_app_state = app;
+int OnSensorEvent(int /* fd */, int /* events */, void* data) {
+  CHECK_NOT_NULL(data);
+  Engine* engine = reinterpret_cast<Engine*>(data);
 
-#if 0
-
-  }
-#endif
-
-  base::android::InitVM(app->activity->vm);
-  if (!content::android::OnJNIOnLoadInit()) {
-    return;
+  CHECK_NOT_NULL(engine->accelerometerSensor);
+  ASensorEvent event;
+  while (ASensorEventQueue_getEvents(engine->sensorEventQueue, &event, 1) > 0) {
+    //LOGI("accelerometer: x=%f y=%f z=%f", event.acceleration.x,
+    //     event.acceleration.y, event.acceleration.z);
   }
 
-  // Set the callback to handle commands like APP_CMD_INIT_WINDOW
-  app->onAppCmd = handle_cmd;
-  app->onInputEvent = handle_input;
+  // From the docs:
+  //
+  // Implementations should return 1 to continue receiving callbacks, or 0 to
+  // have this file descriptor and callback unregistered from the looper.
+  return 1;
+}
 
-  // Main loop
-  int events;
-  android_poll_source* source;
+/**
+ * This is the main entry point of a native application that is using
+ * android_native_app_glue.  It runs in its own thread, with its own
+ * event loop for receiving input events and doing other things.
+ */
+void android_main(android_app* state) {
+  Engine engine{};
 
-  while (true) {
-    while (ALooper_pollAll(0, nullptr, &events, (void**)&source) >= 0) {
-      if (source) {
-        source->process(app, source);
-      }
+  memset(&engine, 0, sizeof(engine));
+  state->userData = &engine;
+  state->onAppCmd = engine_handle_cmd;
+  state->onInputEvent = engine_handle_input;
+  engine.app = state;
 
-      if (app->destroyRequested != 0) {
-        cleanup_graphics();
-        return;
-      }
+  g_native_app_state = state;
+
+  // Prepare to monitor accelerometer
+  engine.CreateSensorListener(OnSensorEvent);
+
+  if (state->savedState != nullptr) {
+    // We are starting with a previous saved state; restore from it.
+    engine.state = *(SavedState*)state->savedState;
+  }
+
+  while (!state->destroyRequested) {
+    // Our input, sensor, and update/render logic is all driven by callbacks, so
+    // we don't need to use the non-blocking poll.
+    android_poll_source* source = nullptr;
+    auto result = ALooper_pollOnce(-1, nullptr, nullptr,
+                                   reinterpret_cast<void**>(&source));
+    if (result == ALOOPER_POLL_ERROR) {
+      fatal("ALooper_pollOnce returned an error");
     }
 
-    // Application-specific rendering and update logic here
-    render();
+    if (source != nullptr) {
+      source->process(state, source);
+    }
   }
+
+  engine_term_display(&engine);
 }
 // END_INCLUDE(all)

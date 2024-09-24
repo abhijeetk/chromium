@@ -27,13 +27,13 @@ int OpenApkAsset(const std::string& file_path_input,
                  const std::string& split_name,
                  base::MemoryMappedFile::Region* region) {
   std::string file_path = file_path_input;
-  LOG(ERROR) << "<------------------------|||--------------------------->" << g_native_app_state;
+  // LOG(ERROR) <<"<------------------------|||--------------------------->" << g_native_app_state;
 #if BUILDFLAG(ANATIVE_BUILD)
   if (!g_native_app_state) {
     return -1;
   }
 
-  LOG(ERROR) << "<------------------------|||--------------------------->";
+  // LOG(ERROR) <<"<------------------------|||--------------------------->";
   // Find the position of the substring and remove it
   std::string to_remove = "assets/";
   size_t pos = file_path.find(to_remove);
@@ -46,7 +46,7 @@ int OpenApkAsset(const std::string& file_path_input,
   AAsset* asset =
       AAssetManager_open(asset_manager, file_path.c_str(), AASSET_MODE_UNKNOWN);
   if (!asset) {
-    LOG(ERROR) << "AssetManager : Failed to open asset: " << file_path.c_str();
+    // LOG(ERROR) <<"AssetManager : Failed to open asset: " << file_path.c_str();
     return -1;  // Failed to open the asset
   }
 
@@ -54,7 +54,7 @@ int OpenApkAsset(const std::string& file_path_input,
   long asset_size = AAsset_getLength(asset);
   if (asset_size <= 0) {
     AAsset_close(asset);
-    LOG(ERROR) << "AssetManager : Asset size is invalid: " << file_path.c_str();
+    // LOG(ERROR) <<"AssetManager : Asset size is invalid: " << file_path.c_str();
     return -1;
   }
 
@@ -65,8 +65,8 @@ int OpenApkAsset(const std::string& file_path_input,
   // use the asset)
   int fd = AAsset_openFileDescriptor(asset, &asset_offset, &asset_size);
   if (fd < 0) {
-    LOG(ERROR) << "AssetManager : Failed to get file descriptor for asset: "
-               << file_path.c_str();
+    // LOG(ERROR) <<"AssetManager : Failed to get file descriptor for asset: "
+    //           << file_path.c_str();
     AAsset_close(asset);
     return -1;
   }
