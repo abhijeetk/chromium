@@ -15,6 +15,12 @@
 #include "content/shell/browser/shell_browser_context.h"
 #include "content/shell/browser/shell_content_browser_client.h"
 #include "url/gurl.h"
+#include "ui/android/window_android.h"
+
+#if BUILDFLAG(ANATIVE_BUILD)
+#include "base/android/android_app_state.h"
+#include "components/embedder_support/android/view/content_view_render_view.h"
+#endif
 
 #if BUILDFLAG(ANATIVE_BUILD)
 #include "components/embedder_support/android/view/content_view_render_view.h"
@@ -81,6 +87,7 @@ static void JNI_ShellManager_Init(JNIEnv* env,
 
 void JNI_ShellManager_LaunchShell(JNIEnv* env,
                                   const JavaParamRef<jstring>& jurl) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   ShellBrowserContext* browserContext =
       ShellContentBrowserClient::Get()->browser_context();
   GURL url(base::android::ConvertJavaStringToUTF8(env, jurl));

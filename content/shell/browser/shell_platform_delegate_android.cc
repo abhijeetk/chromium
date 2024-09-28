@@ -95,7 +95,18 @@ void ShellPlatformDelegate::SetContents(Shell* shell) {
   Java_Shell_initFromNativeTabContents(
       env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
 #else
+<<<<<<< HEAD
   // TODO(IGALIA): Implement me.
+=======
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__
+             << "\tshell_data.window : " << shell_data.window
+             << "\tANativeWindow_getWidth : "
+             << ANativeWindow_getWidth(shell_data.window)
+             << "\tANativeWindow_getHeight : "
+             << ANativeWindow_getHeight(shell_data.window)
+             << "\tANativeWindow_getFormat : "
+             << ANativeWindow_getFormat(shell_data.window);
+>>>>>>> 5a259a88032d4 (Fixed issues)
 #endif
 }
 
@@ -108,7 +119,7 @@ void ShellPlatformDelegate::ResizeWebContent(Shell* shell,
 void ShellPlatformDelegate::EnableUIControl(Shell* shell,
                                             UIControl control,
                                             bool is_enabled) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  // LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -167,7 +178,7 @@ void ShellPlatformDelegate::ToggleFullscreenModeForTab(
 bool ShellPlatformDelegate::IsFullscreenForTabOrPending(
     Shell* shell,
     const WebContents* web_contents) const {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  // LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   const ShellData& shell_data = shell_data_map_.find(shell)->second;

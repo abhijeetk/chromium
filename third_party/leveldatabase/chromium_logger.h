@@ -28,8 +28,7 @@ class ChromiumLogger : public Logger {
 
   void Logv(const char* format, va_list arguments) override {
     std::string str = base::StrCat(
-        {base::UnlocalizedTimeFormatWithPattern(base::Time::Now(),
-                                                "yyyy/MM/dd-HH:mm:ss.SSS"),
+        {"IGALIA",
          base::StringPrintf(
              " %" PRIx64 " ",
              static_cast<uint64_t>(base::PlatformThread::CurrentId())),

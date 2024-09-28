@@ -365,10 +365,10 @@ static void engine_handle_cmd(android_app* app, int32_t cmd) {
         // Initialize graphics (e.g., OpenGL ES) and prepare to draw
         // init_graphics(app->window);
 
-        // LOG(ERROR) << "ABHIJEET : Abhijeet : externalDataPath : "
-        //           << app->activity->externalDataPath;
-        // LOG(ERROR) << "ABHIJEET : Abhijeet : internalDataPath : "
-        //           << app->activity->internalDataPath;
+        LOG(ERROR) << "ABHIJEET : Abhijeet : externalDataPath : "
+                   << app->activity->externalDataPath;
+        LOG(ERROR) << "ABHIJEET : Abhijeet : internalDataPath : "
+                   << app->activity->internalDataPath;
         // LOG(ERROR) << "ABHIJEET : Abhijeet : assetManager : "
         //           << app->activity->assetManager;
         // LOG(ERROR) << "ABHIJEET : Abhijeet : env : " << app->activity->env;

@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import org.jni_zero.CalledByNative;
 import org.jni_zero.JNINamespace;
 import org.jni_zero.NativeMethods;
+import android.util.Log;
 
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.WindowAndroid;
@@ -49,6 +50,7 @@ public class ContentViewRenderView extends FrameLayout {
     public ContentViewRenderView(Context context) {
         super(context);
 
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         mSurfaceBridge = createSurfaceBridge();
         mSurfaceBridge.initialize(this);
     }
@@ -178,7 +180,7 @@ public class ContentViewRenderView extends FrameLayout {
     public void setCurrentWebContents(WebContents webContents) {
         assert mNativeContentViewRenderView != 0;
         mWebContents = webContents;
-
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         if (webContents != null) {
             webContents.setSize(mWidth, mHeight);
             ContentViewRenderViewJni.get()

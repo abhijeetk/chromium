@@ -23,6 +23,55 @@
 namespace base {
 namespace android {
 
+#if BUILDFLAG(ANATIVE_BUILD)
+static int android_read(void* asset, char* buf, int size) {
+    return AAsset_read((AAsset*)asset, buf, size);
+}
+
+static int android_write(void* asset, const char* buf, int size) {
+    return EACCES; // can't provide write access to the apk
+}
+
+static fpos_t android_seek(void* asset, fpos_t offset, int whence) {
+    return AAsset_seek((AAsset*)asset, offset, whence);
+}
+
+static int android_close(void* asset) {
+    AAsset_close((AAsset*)asset);
+    return 0;
+}
+
+
+FILE* android_fopen(const char* fname, const char* mode, AAssetManager *assetManager) {
+    if(mode[0] == 'w') return nullptr;
+
+    AAsset* asset = AAssetManager_open( assetManager, fname, 0);
+    if(!asset) return nullptr;
+
+    return funopen(asset, android_read, android_write, android_seek, android_close);
+}
+
+//We will eventually improve this, but let's settle with a familiar structure, for now.
+std::string readShaderToString( FILE* fileDescriptor ) {
+    const unsigned N=1024;
+    std::string total;
+    while (true) {
+        char buffer[ N ];
+        size_t read = fread((void *)&buffer[0], 1, N, fileDescriptor);
+        if (read) {
+            for ( int c = 0; c <  read; ++c ) {
+                total.push_back( buffer[ c ] );
+            }
+        }
+        if (read < N) {
+            break;
+        }
+    }
+    LOG(ERROR) << "Size : " << total.length();
+    return total;
+}
+#endif
+
 int OpenApkAsset(const std::string& file_path_input,
                  const std::string& split_name,
                  base::MemoryMappedFile::Region* region) {
@@ -44,7 +93,7 @@ int OpenApkAsset(const std::string& file_path_input,
   AAssetManager* asset_manager = g_native_app_state->activity->assetManager;
   // Open the asset
   AAsset* asset =
-      AAssetManager_open(asset_manager, file_path.c_str(), AASSET_MODE_UNKNOWN);
+      AAssetManager_open(asset_manager, file_path.c_str(), AASSET_MODE_STREAMING);
   if (!asset) {
     // LOG(ERROR) <<"AssetManager : Failed to open asset: " << file_path.c_str();
     return -1;  // Failed to open the asset

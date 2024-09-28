@@ -6,7 +6,6 @@ package org.chromium.content_shell;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import org.chromium.base.Log;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
@@ -14,6 +13,7 @@ import org.jni_zero.CalledByNative;
 import org.jni_zero.JNINamespace;
 import org.jni_zero.NativeMethods;
 
+import org.chromium.base.Log;
 import org.chromium.base.ThreadUtils;
 import org.chromium.components.embedder_support.view.ContentViewRenderView;
 import org.chromium.content_public.browser.WebContents;

@@ -22,7 +22,7 @@ namespace android {
 bool GetDataDirectory(FilePath* result) {
 #if BUILDFLAG(ANATIVE_BUILD)
   if (g_native_app_state) {
-    FilePath data_path("/data/user/0/com.example.myapp/app_content_shell");
+    FilePath data_path("/data/user/0/com.example.myapp/files");
     *result = data_path;
     return true;
   }

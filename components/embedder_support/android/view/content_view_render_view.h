@@ -33,6 +33,7 @@ class ContentViewRenderView : public content::CompositorClient {
       JNIEnv* env,
       const base::android::JavaParamRef<jobject>& obj,
       const base::android::JavaParamRef<jobject>& jweb_contents);
+  void SetCurrentWebContents(content::WebContents* web_contents);
   void OnPhysicalBackingSizeChanged(
       JNIEnv* env,
       const base::android::JavaParamRef<jobject>& obj,

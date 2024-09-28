@@ -205,7 +205,7 @@ std::string UnlocalizedTimeFormatWithPattern(const Time& time,
                                              std::string_view pattern,
                                              const icu::TimeZone* time_zone) {
   icu::SimpleDateFormat formatter =
-      CreateSimpleDateFormatter({}, false, icu::Locale("en_US"));
+      CreateSimpleDateFormatter({}, false, icu::Locale::getDefault());
   if (time_zone) {
     formatter.setTimeZone(*time_zone);
   }
