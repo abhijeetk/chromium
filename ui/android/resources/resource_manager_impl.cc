@@ -19,6 +19,7 @@
 #include "base/trace_event/memory_usage_estimator.h"
 #include "base/trace_event/process_memory_dump.h"
 #include "base/trace_event/trace_event.h"
+#include "build/blink_buildflags.h"
 #include "cc/resources/scoped_ui_resource.h"
 #include "cc/resources/ui_resource_manager.h"
 #include "third_party/skia/include/core/SkBitmap.h"
@@ -67,12 +68,14 @@ ResourceManagerImpl* ResourceManagerImpl::FromJavaObject(
 
 ResourceManagerImpl::ResourceManagerImpl(gfx::NativeWindow native_window)
     : ui_resource_manager_(nullptr) {
+#if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = base::android::AttachCurrentThread();
   java_obj_.Reset(
       env, Java_ResourceManager_create(env, native_window->GetJavaObject(),
                                        reinterpret_cast<intptr_t>(this))
                .obj());
   DCHECK(!java_obj_.is_null());
+#endif
   base::trace_event::MemoryDumpManager::GetInstance()->RegisterDumpProvider(
       this, "android::ResourceManagerImpl",
       base::SingleThreadTaskRunner::GetCurrentDefault());

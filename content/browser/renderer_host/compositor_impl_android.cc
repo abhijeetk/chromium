@@ -31,6 +31,7 @@
 #include "base/threading/simple_thread.h"
 #include "base/threading/thread.h"
 #include "base/threading/thread_checker.h"
+#include "build/blink_buildflags.h"
 #include "cc/animation/animation_host.h"
 #include "cc/base/switches.h"
 #include "cc/input/input_handler.h"
@@ -750,7 +751,12 @@ void CompositorImpl::OnUpdateSupportedRefreshRates(
 // the hint can be changed because of panel orientation. e.g., In Galaxy fold,
 // main lcd has 270 degrees panel orientation, but sub lcd does not have it.
 void CompositorImpl::OnUpdateOverlayTransform() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  gfx::OverlayTransform hint = gfx::OverlayTransform::OVERLAY_TRANSFORM_NONE;
+#else
   gfx::OverlayTransform hint = root_window_->GetOverlayTransform();
+#endif
+  LOG(ERROR) << "ABHIJEET : hint : " << static_cast<int>(hint);
   if (host_) {
     host_->set_display_transform_hint(hint);
   }
