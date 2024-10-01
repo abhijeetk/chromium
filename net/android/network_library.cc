@@ -19,6 +19,7 @@
 #include "base/strings/string_split.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/scoped_blocking_call.h"
+#include "build/blink_buildflags.h"
 #include "net/base/net_errors.h"
 #include "net/dns/public/dns_protocol.h"
 #include "net/net_jni_headers/AndroidNetworkLibrary_jni.h"
@@ -189,9 +190,9 @@ bool GetCurrentDnsServers(std::vector<IPEndPoint>* dns_servers,
                           bool* dns_over_tls_active,
                           std::string* dns_over_tls_hostname,
                           std::vector<std::string>* search_suffixes) {
-#if 1  // BUILDFLAG(ANATIVE_BUILD)
-  // TODO(abhijeet) : Both content_shell and Android Native build should use same code
-  // path for testing.
+#if BUILDFLAG(ANATIVE_BUILD)
+  // TODO(IGALIA)) : Both content_shell and Android Native build should use same
+  // code path for testing.
   return false;
 #else
   DCHECK_GE(base::android::BuildInfo::GetInstance()->sdk_int(),

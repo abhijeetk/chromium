@@ -23,7 +23,7 @@
 
 using base::android::AttachCurrentThread;
 
-// TODO(abhijeet): Eliminate global variables and implement a more robust
+// TODO(IGALIA)): Eliminate global variables and implement a more robust
 // solution.
 base::android::JavaHandlerThread* class_ptr = nullptr;
 long event = 0;

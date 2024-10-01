@@ -4,7 +4,7 @@
 #include <android_native_app_glue.h>
 #include "base/base_export.h"
 
-// TODO(abhijeet) : Replace the global variable with a Singleton implementation
+// TODO(IGALIA)) : Replace the global variable with a Singleton implementation
 // to ensure controlled access to the instance and to enforce a single instance
 // across the application
 

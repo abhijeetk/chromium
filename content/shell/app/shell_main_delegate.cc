@@ -259,7 +259,7 @@ bool ShellMainDelegate::ShouldCreateFeatureList(InvokedIn invoked_in) {
 #if BUILDFLAG(ANATIVE_BUILD)
   return true;
 #else
-  // TODO(abhijeet) : We are returning same value as our experiemt just to check
+  // TODO(IGALIA)) : We are returning same value as our experiemt just to check
   // content_shell is working.
   // return absl::holds_alternative<InvokedInChildProcess>(invoked_in);
   return true;
@@ -270,7 +270,7 @@ bool ShellMainDelegate::ShouldInitializeMojo(InvokedIn invoked_in) {
 #if BUILDFLAG(ANATIVE_BUILD)
   return true;
 #else
-  // TODO(abhijeet) : We are returning same value as our experiemt just to check
+  // TODO(IGALIA)) : We are returning same value as our experiemt just to check
   // content_shell is working.
   // return ShouldCreateFeatureList(invoked_in);
   return true;
@@ -436,7 +436,7 @@ std::optional<int> ShellMainDelegate::PostEarlyInitialization(
   content::InitializeMojoCore();
   return std::nullopt;
 #else
-  // TODO(abhijeet) : We are returning same value as our experiemt just to check
+  // TODO(IGALIA)) : We are returning same value as our experiemt just to check
   // content_shell is working.
   // if (!ShouldCreateFeatureList(invoked_in)) {
   //   browser_client_->CreateFeatureListAndFieldTrials();

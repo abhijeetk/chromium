@@ -36,7 +36,7 @@ void SetContentCommandLineFlags(bool single_process) {
 
   parsed_command_line->AppendSwitch(switches::kEnableViewport);
   parsed_command_line->AppendSwitch(switches::kValidateInputEventStream);
-  // TODO (abhijeet): We have omitted BUILDFLAG(ANATIVE_BUILD) in this file to
+  // TODO(IGALIA): We have omitted BUILDFLAG(ANATIVE_BUILD) in this file to
   // allow building both the content shell and our solution using the same
   // command-line argument.
   parsed_command_line->AppendSwitch(switches::kEnableLongpressDragSelection);

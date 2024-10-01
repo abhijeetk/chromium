@@ -13,7 +13,8 @@ namespace base {
 // static
 void PostTaskAndroid::SignalNativeSchedulerReady() {
 #if BUILDFLAG(ANATIVE_BUILD)
-  LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__ << " for android native build";
+  LOG(ERROR) << "TODO(IGALIA)) : Implement " << __FUNCTION__
+             << " for android native build";
 #else
   Java_PostTask_onNativeSchedulerReady(jni_zero::AttachCurrentThread());
 #endif

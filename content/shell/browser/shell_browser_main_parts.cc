@@ -140,7 +140,7 @@ void ShellBrowserMainParts::PostCreateMainMessageLoop() {
 
 int ShellBrowserMainParts::PreEarlyInitialization() {
 #if BUILDFLAG(ANATIVE_BUILD)
-  LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__
+  LOG(ERROR) << "TODO(IGALIA)) : Implement " << __FUNCTION__
              << " for Android Native build";
 #else
 #if defined(USE_AURA) && (BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS))
