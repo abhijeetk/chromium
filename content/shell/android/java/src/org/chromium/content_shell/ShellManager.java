@@ -107,6 +107,15 @@ public class ShellManager extends FrameLayout {
         if (mActiveShell != null) removeShell(mActiveShell);
 
         showShell(shellView);
+
+    try {
+        // Pause for 1 second (1000 milliseconds)
+        Thread.sleep(1000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+
+
         return shellView;
     }
 

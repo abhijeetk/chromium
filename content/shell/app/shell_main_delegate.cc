@@ -208,6 +208,7 @@ ShellMainDelegate::~ShellMainDelegate() {
 }
 
 std::optional<int> ShellMainDelegate::BasicStartupComplete() {
+  CHECK(false);
   base::CommandLine& command_line = *base::CommandLine::ForCurrentProcess();
   if (command_line.HasSwitch("run-layout-test")) {
     std::cerr << std::string(79, '*') << "\n"

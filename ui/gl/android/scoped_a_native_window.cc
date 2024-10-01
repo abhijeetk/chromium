@@ -9,6 +9,12 @@
 #include "base/android/jni_android.h"
 #include "build/blink_buildflags.h"
 #include "ui/gl/android/scoped_java_surface.h"
+#include "base/logging.h"
+#include "build/blink_buildflags.h"
+
+#if BUILDFLAG(ANATIVE_BUILD)
+#include "base/android/android_app_state.h"
+#endif
 
 #if BUILDFLAG(ANATIVE_BUILD)
 #include "base/android/android_app_state.h"
@@ -26,6 +32,7 @@ ScopedANativeWindow::ScopedANativeWindow(const ScopedJavaSurface& surface) {
   a_native_window_ = g_native_app_state->window;
 #else
   if (!surface.j_surface()) {
+    LOG(ERROR) << "IGALIA : func :" << __FUNCTION__;
     return;
   }
 

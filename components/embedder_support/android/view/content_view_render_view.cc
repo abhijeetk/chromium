@@ -30,6 +30,8 @@ ContentViewRenderView::ContentViewRenderView(JNIEnv* env,
                                              jobject obj,
                                              gfx::NativeWindow root_window)
     : root_window_(root_window), current_surface_format_(0) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   java_obj_.Reset(env, obj);
 }
 
@@ -40,6 +42,8 @@ static jlong JNI_ContentViewRenderView_Init(
     JNIEnv* env,
     const JavaParamRef<jobject>& obj,
     const JavaParamRef<jobject>& jroot_window_android) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   gfx::NativeWindow root_window =
       ui::WindowAndroid::FromJavaWindowAndroid(jroot_window_android);
   ContentViewRenderView* content_view_render_view =
@@ -56,6 +60,8 @@ void ContentViewRenderView::SetCurrentWebContents(
     JNIEnv* env,
     const JavaParamRef<jobject>& obj,
     const JavaParamRef<jobject>& jweb_contents) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   InitCompositor();
   content::WebContents* web_contents =
       content::WebContents::FromJavaWebContents(jweb_contents);
@@ -65,6 +71,8 @@ void ContentViewRenderView::SetCurrentWebContents(
 }
 
 void ContentViewRenderView::SetCurrentWebContents(content::WebContents* web_contents) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   InitCompositor();
   compositor_->SetRootLayer(web_contents
                                 ? web_contents->GetNativeView()->GetLayer()
@@ -77,6 +85,8 @@ void ContentViewRenderView::OnPhysicalBackingSizeChanged(
     const JavaParamRef<jobject>& jweb_contents,
     jint width,
     jint height) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   content::WebContents* web_contents =
       content::WebContents::FromJavaWebContents(jweb_contents);
   gfx::Size size(width, height);
@@ -85,12 +95,17 @@ void ContentViewRenderView::OnPhysicalBackingSizeChanged(
 
 void ContentViewRenderView::SurfaceCreated(JNIEnv* env,
                                            const JavaParamRef<jobject>& obj) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   current_surface_format_ = 0;
   InitCompositor();
 }
 
 void ContentViewRenderView::SurfaceDestroyed(JNIEnv* env,
                                              const JavaParamRef<jobject>& obj) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
+
   // When we switch from Chrome to other app we can't detach child surface
   // controls because it leads to a visible hole: b/157439199. To avoid this we
   // don't detach surfaces if the surface is going to be destroyed, they will be
@@ -108,6 +123,10 @@ void ContentViewRenderView::SurfaceChanged(
     jint width,
     jint height,
     const JavaParamRef<jobject>& surface) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__ << "\tformat : " << format
+  << "\tw : " << width
+  << "\th : " << height;
+  //base::debug::StackTrace().Print();
   if (current_surface_format_ != format) {
     current_surface_format_ = format;
     compositor_->SetSurface(surface,
@@ -120,6 +139,8 @@ void ContentViewRenderView::SetOverlayVideoMode(
     JNIEnv* env,
     const JavaParamRef<jobject>& obj,
     bool enabled) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   compositor_->SetRequiresAlphaChannel(enabled);
   compositor_->SetBackgroundColor(enabled ? SK_ColorTRANSPARENT
                                           : SK_ColorWHITE);
@@ -127,16 +148,22 @@ void ContentViewRenderView::SetOverlayVideoMode(
 }
 
 void ContentViewRenderView::UpdateLayerTreeHost() {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   // TODO(wkorman): Rename Layout to UpdateLayerTreeHost in all Android
   // Compositor related classes.
 }
 
 void ContentViewRenderView::DidSwapFrame(int pending_frames) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_ContentViewRenderView_didSwapFrame(env, java_obj_);
 }
 
 void ContentViewRenderView::InitCompositor() {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   if (!compositor_)
     compositor_.reset(content::Compositor::Create(this, root_window_));
 }

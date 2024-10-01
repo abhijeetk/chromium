@@ -10,18 +10,24 @@
 #include "content/browser/android/content_startup_flags.h"
 #include "content/browser/browser_main_loop.h"
 #include "content/public/android/content_main_dex_jni/BrowserStartupControllerImpl_jni.h"
+#include "content/shell/android/shell_manager.h"
 
 using base::android::JavaParamRef;
 
 namespace content {
 
 void BrowserStartupComplete(int result) {
+
 #if !BUILDFLAG(ANATIVE_BUILD)
+  LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__
+             << " for Android Native build : g_global_state : ";
+  //ANativeGlobal::g_global_state.Get().j_shell_manager.Reset(nullptr);
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_BrowserStartupControllerImpl_browserStartupComplete(env, result);
 #else
-  LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__
-             << " for Android Native build";
+  //LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__
+  //           << " for Android Native build : g_global_state : " << ANativeGlobal::g_global_state.Get().g_shell_manager;
+              CHECK(false);
 #endif
 }
 

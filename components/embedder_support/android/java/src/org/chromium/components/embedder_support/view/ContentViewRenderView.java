@@ -7,6 +7,7 @@ package org.chromium.components.embedder_support.view;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,7 +17,6 @@ import android.widget.FrameLayout;
 import org.jni_zero.CalledByNative;
 import org.jni_zero.JNINamespace;
 import org.jni_zero.NativeMethods;
-import android.util.Log;
 
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.WindowAndroid;
@@ -60,11 +60,13 @@ public class ContentViewRenderView extends FrameLayout {
     }
 
     /**
-     * Initialization that requires native libraries should be done here.
-     * Native code should add/remove the layers to be rendered through the ContentViewLayerRenderer.
+     * Initialization that requires native libraries should be done here. Native code should
+     * add/remove the layers to be rendered through the ContentViewLayerRenderer.
+     *
      * @param rootWindow The {@link WindowAndroid} this render view should be linked to.
      */
     public void onNativeLibraryLoaded(WindowAndroid rootWindow) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         assert !getSurfaceView().getHolder().getSurface().isValid()
                 : "Surface created before native library loaded.";
         assert rootWindow != null;
@@ -77,6 +79,7 @@ public class ContentViewRenderView extends FrameLayout {
                     @Override
                     public void surfaceChanged(
                             SurfaceHolder holder, int format, int width, int height) {
+                        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
                         assert mNativeContentViewRenderView != 0;
                         ContentViewRenderViewJni.get()
                                 .surfaceChanged(
@@ -99,6 +102,7 @@ public class ContentViewRenderView extends FrameLayout {
 
                     @Override
                     public void surfaceCreated(SurfaceHolder holder) {
+                        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
                         assert mNativeContentViewRenderView != 0;
                         ContentViewRenderViewJni.get()
                                 .surfaceCreated(
@@ -118,6 +122,7 @@ public class ContentViewRenderView extends FrameLayout {
 
                     @Override
                     public void surfaceDestroyed(SurfaceHolder holder) {
+                        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
                         assert mNativeContentViewRenderView != 0;
                         ContentViewRenderViewJni.get()
                                 .surfaceDestroyed(
@@ -129,6 +134,7 @@ public class ContentViewRenderView extends FrameLayout {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         mWidth = w;
         mHeight = h;
         if (mWebContents != null) mWebContents.setSize(w, h);
@@ -137,6 +143,7 @@ public class ContentViewRenderView extends FrameLayout {
     /** View's method override to notify WindowAndroid about changes in its visibility. */
     @Override
     protected void onWindowVisibilityChanged(int visibility) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         super.onWindowVisibilityChanged(visibility);
 
         if (mWindowAndroid == null) return;
@@ -149,19 +156,22 @@ public class ContentViewRenderView extends FrameLayout {
     }
 
     /**
-     * Sets the background color of the surface view.  This method is necessary because the
-     * background color of ContentViewRenderView itself is covered by the background of
-     * SurfaceView.
+     * Sets the background color of the surface view. This method is necessary because the
+     * background color of ContentViewRenderView itself is covered by the background of SurfaceView.
+     *
      * @param color The color of the background.
      */
     public void setSurfaceViewBackgroundColor(int color) {
+        Log.d("ABHIJEET : color : ", Integer.toString(color));
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         if (getSurfaceView() != null) {
-            getSurfaceView().setBackgroundColor(color);
+            getSurfaceView().setBackgroundColor(Color.RED);
         }
     }
 
     /** Gets the SurfaceView for this ContentViewRenderView */
     public SurfaceView getSurfaceView() {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         return mSurfaceBridge.getSurfaceView();
     }
 
@@ -200,15 +210,19 @@ public class ContentViewRenderView extends FrameLayout {
      * This method should be subclassed to provide actions to be performed once the view is ready to
      * render.
      */
-    protected void onReadyToRender() {}
+    protected void onReadyToRender() {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+    }
 
     /**
-     * This method could be subclassed optionally to provide a custom SurfaceView object to
-     * this ContentViewRenderView.
+     * This method could be subclassed optionally to provide a custom SurfaceView object to this
+     * ContentViewRenderView.
+     *
      * @param context The context used to create the SurfaceView object.
      * @return The created SurfaceView object.
      */
     protected SurfaceView createSurfaceView(Context context) {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         return new SurfaceView(context);
     }
 
@@ -231,6 +245,7 @@ public class ContentViewRenderView extends FrameLayout {
 
     @CalledByNative
     private void didSwapFrame() {
+        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         if (getSurfaceView().getBackground() != null) {
             post(
                     new Runnable() {
@@ -251,6 +266,7 @@ public class ContentViewRenderView extends FrameLayout {
         }
 
         protected void initialize(ContentViewRenderView renderView) {
+            Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
             mSurfaceView = renderView.createSurfaceView(renderView.getContext());
             mSurfaceView.setZOrderMediaOverlay(true);
 

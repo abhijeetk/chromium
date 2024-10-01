@@ -129,10 +129,12 @@ scoped_refptr<GLSurface> CreateViewGLSurface(GLDisplay* display,
     case kGLImplementationEGLGLES2:
     case kGLImplementationEGLANGLE:
       if (window != gfx::kNullAcceleratedWidget) {
+        LOG(ERROR) << "IGALIA : Init ANativeWindow implementation : ";
         return InitializeGLSurface(new NativeViewGLSurfaceEGL(
             display->GetAs<gl::GLDisplayEGL>(),
             ScopedANativeWindow::Wrap(window), nullptr));
       } else {
+        LOG(ERROR) << "IGALIA : Init stub implementation : ";
         return InitializeGLSurface(new GLSurfaceStub());
       }
     default:

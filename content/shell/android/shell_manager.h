@@ -11,6 +11,7 @@
 #include "build/blink_buildflags.h"
 #include "base/android/jni_android.h"
 #include "base/android/scoped_java_ref.h"
+#include "base/lazy_instance.h"
 
 class Shell;
 
@@ -24,8 +25,32 @@ class ContentViewRenderView;
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
 >>>>>>> 5a259a88032d4 (Fixed issues)
+=======
+namespace content {
+  class ShellManager;
+}
+>>>>>>> 2e1106acfe7f9 (TEST)
 #endif
+
+extern "C" {
+namespace ANativeGlobal {
+
+struct GlobalState {
+  GlobalState() {}
+#if BUILDFLAG(ANATIVE_BUILD)
+  RAW_PTR_EXCLUSION content::ShellManager* g_shell_manager;
+#else
+  base::android::ScopedJavaGlobalRef<jobject> j_shell_manager;
+#endif
+};
+
+// For ANative build, extern declaration for access in other files
+extern base::LazyInstance<GlobalState>::DestructorAtExit g_global_state;
+
+}  // namespace ANativeGlobal
+}
 
 namespace cc {
 class Layer;
@@ -62,48 +87,24 @@ class ShellManager {
   ShellManager(const ShellManager&) = delete;
   ShellManager& operator=(const ShellManager&) = delete;
 
-<<<<<<< HEAD
   void setWindow(gfx::NativeWindow window);
   void setStartupUrl(const std::string& url);
 
-=======
-  // Setters
-  void setWindow(gfx::NativeWindow window);
-  void setStartupUrl(const std::string& url);
-
-  // Getters
->>>>>>> 5a259a88032d4 (Fixed issues)
   gfx::NativeWindow getWindow() const;
   embedder_support::ContentViewRenderView* getContentViewRenderView() const;
   Shell* getActiveShell() const;
 
-<<<<<<< HEAD
-=======
-  // Methods
->>>>>>> 5a259a88032d4 (Fixed issues)
   void launchShell(const std::string& url);
   Shell* createShell(long nativeShellPtr);
   void showShell(Shell* shellView);
   void removeShell(Shell* shellView);
   void destroy();
 
-<<<<<<< HEAD
  private:
   gfx::NativeWindow mWindow = nullptr;  // Internally points to WindowAndroid*
   RAW_PTR_EXCLUSION Shell* mActiveShell = nullptr;
   RAW_PTR_EXCLUSION embedder_support::ContentViewRenderView*
       mContentViewRenderView = nullptr;
-=======
-  RAW_PTR_EXCLUSION embedder_support::ContentViewRenderView*
-      mContentViewRenderView = nullptr;
-
- private:
-  gfx::NativeWindow mWindow = nullptr;  // Internally points to WindowAndroid*
-   RAW_PTR_EXCLUSION Shell* mActiveShell = nullptr;
-  // RAW_PTR_EXCLUSION embedder_support::ContentViewRenderView*
-  //    mContentViewRenderView = nullptr;
-
->>>>>>> 5a259a88032d4 (Fixed issues)
   std::string mStartupUrl;
 };
 #endif

@@ -39,10 +39,10 @@ void SetContentCommandLineFlags(bool single_process) {
   // TODO(IGALIA): We have omitted BUILDFLAG(ANATIVE_BUILD) in this file to
   // allow building both the content shell and our solution using the same
   // command-line argument.
-  parsed_command_line->AppendSwitch(switches::kEnableLongpressDragSelection);
-  parsed_command_line->AppendSwitchASCII(
-      blink::switches::kTouchTextSelectionStrategy,
-      blink::switches::kTouchTextSelectionStrategy_Direction);
+  //parsed_command_line->AppendSwitch(switches::kEnableLongpressDragSelection);
+  //parsed_command_line->AppendSwitchASCII(
+  //    blink::switches::kTouchTextSelectionStrategy,
+  //    blink::switches::kTouchTextSelectionStrategy_Direction);
 
   // On legacy low-memory devices the behavior has not been studied with regard
   // to having an extra process with similar priority as the foreground renderer
@@ -50,7 +50,11 @@ void SetContentCommandLineFlags(bool single_process) {
   // on such systems.
   // if (base::SysInfo::IsLowEndDevice())
   parsed_command_line->AppendSwitch(switches::kInProcessGPU);
+  parsed_command_line->AppendSwitch(switches::kInProcessGPU);
 
+  parsed_command_line->AppendSwitchASCII(switches::kEnableLogging, "stderr");
+  parsed_command_line->AppendSwitch(switches::kEnableGPUDebugging);
+   
   // Disable anti-aliasing.
   parsed_command_line->AppendSwitch(
       cc::switches::kDisableCompositedAntialiasing);

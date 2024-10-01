@@ -337,8 +337,9 @@ void CompositorImpl::SetRootLayer(scoped_refptr<cc::slim::Layer> root_layer) {
 void CompositorImpl::SetSurface(const base::android::JavaRef<jobject>& surface,
                                 bool can_be_used_with_surface_control) {
   gpu::GpuSurfaceTracker* tracker = gpu::GpuSurfaceTracker::Get();
-
+    LOG(ERROR) << "IGALIA : func :" << __FUNCTION__;
   if (window_) {
+    LOG(ERROR) << "IGALIA : window_ :";
     // Shut down GL context before unregistering surface.
     SetVisible(false);
     tracker->RemoveSurface(surface_handle_);
@@ -350,6 +351,7 @@ void CompositorImpl::SetSurface(const base::android::JavaRef<jobject>& surface,
   gl::ScopedANativeWindow window(scoped_surface);
 
   if (window) {
+    LOG(ERROR) << "IGALIA : window_ :";
     window_ = std::move(window);
     // Register first, SetVisible() might create a LayerTreeFrameSink.
     surface_handle_ = tracker->AddSurfaceForNativeWidget(
@@ -357,6 +359,7 @@ void CompositorImpl::SetSurface(const base::android::JavaRef<jobject>& surface,
             std::move(scoped_surface), can_be_used_with_surface_control));
     SetVisible(true);
   }
+    LOG(ERROR) << "IGALIA : func :" << __FUNCTION__;
 }
 
 void CompositorImpl::SetBackgroundColor(int color) {

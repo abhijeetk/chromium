@@ -88,6 +88,7 @@ void ShellPlatformDelegate::CleanUp(Shell* shell) {
 }
 
 void ShellPlatformDelegate::SetContents(Shell* shell) {
+<<<<<<< HEAD
 #if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
@@ -98,6 +99,18 @@ void ShellPlatformDelegate::SetContents(Shell* shell) {
 <<<<<<< HEAD
   // TODO(IGALIA): Implement me.
 =======
+=======
+  // base::debug::StackTrace().Print();
+  DCHECK(base::Contains(shell_data_map_, shell));
+  ShellData& shell_data = shell_data_map_[shell];
+
+#if !BUILDFLAG(ANATIVE_BUILD)
+  JNIEnv* env = AttachCurrentThread();
+  Java_Shell_initFromNativeTabContents(
+      env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
+#else
+  CHECK(false);
+>>>>>>> 2e1106acfe7f9 (TEST)
   LOG(ERROR) << "ABHIJEET : " << __FUNCTION__
              << "\tshell_data.window : " << shell_data.window
              << "\tANativeWindow_getWidth : "
@@ -155,6 +168,7 @@ void ShellPlatformDelegate::SetTitle(Shell* shell,
 
 void ShellPlatformDelegate::MainFrameCreated(Shell* shell) {
   LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  base::debug::StackTrace().Print();
 }
 
 bool ShellPlatformDelegate::DestroyShell(Shell* shell) {

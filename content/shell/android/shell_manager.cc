@@ -8,7 +8,6 @@
 #include "base/android/jni_string.h"
 #include "base/android/scoped_java_ref.h"
 #include "base/functional/bind.h"
-#include "base/lazy_instance.h"
 #include "content/public/browser/web_contents.h"
 #include "content/shell/android/content_shell_jni_headers/ShellManager_jni.h"
 #include "content/shell/browser/shell.h"
@@ -31,20 +30,13 @@ using base::android::JavaParamRef;
 using base::android::JavaRef;
 using base::android::ScopedJavaLocalRef;
 
-namespace {
+namespace ANativeGlobal {
 
-struct GlobalState {
-  GlobalState() {}
-  base::android::ScopedJavaGlobalRef<jobject> j_shell_manager;
-#if BUILDFLAG(ANATIVE_BUILD)
-  RAW_PTR_EXCLUSION content::ShellManager* g_shell_manager;
-#endif
-};
-
-base::LazyInstance<GlobalState>::DestructorAtExit g_global_state =
+// For ANative build, extern declaration for access in other files
+__attribute__((visibility("default"))) base::LazyInstance<GlobalState>::DestructorAtExit g_global_state =
     LAZY_INSTANCE_INITIALIZER;
 
-}  // namespace
+}  // namespace ANativeGlobal
 
 namespace content {
 
@@ -61,7 +53,7 @@ ScopedJavaLocalRef<jobject> CreateShellView(Shell* shell) {
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
   return Java_ShellManager_createShell(env,
-                                       g_global_state.Get().j_shell_manager,
+                                       ANativeGlobal::g_global_state.Get().j_shell_manager,
                                        reinterpret_cast<intptr_t>(shell));
 #endif
 }
@@ -71,7 +63,7 @@ void RemoveShellView(const JavaRef<jobject>& shell_view) {
 // TODO(IGALIA) : Implement me.
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
-  Java_ShellManager_removeShell(env, g_global_state.Get().j_shell_manager,
+  Java_ShellManager_removeShell(env, ANativeGlobal::g_global_state.Get().j_shell_manager,
                                 shell_view);
 #endif
 }
