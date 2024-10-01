@@ -16,6 +16,10 @@
 #include "content/shell/browser/shell_content_browser_client.h"
 #include "url/gurl.h"
 
+#if BUILDFLAG(ANATIVE_BUILD)
+#include "base/android/android_app_state.h"
+#endif
+
 using base::android::JavaParamRef;
 using base::android::JavaRef;
 using base::android::ScopedJavaLocalRef;
