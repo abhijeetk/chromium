@@ -8,7 +8,6 @@
 #include <tuple>
 #include <utility>
 
-#include "build/blink_buildflags.h"
 #include "base/base_paths.h"
 #include "base/base_switches.h"
 #include "base/command_line.h"
@@ -208,7 +207,6 @@ ShellMainDelegate::~ShellMainDelegate() {
 }
 
 std::optional<int> ShellMainDelegate::BasicStartupComplete() {
-  CHECK(false);
   base::CommandLine& command_line = *base::CommandLine::ForCurrentProcess();
   if (command_line.HasSwitch("run-layout-test")) {
     std::cerr << std::string(79, '*') << "\n"
@@ -381,14 +379,15 @@ void ShellMainDelegate::ZygoteForked() {
 
 void ShellMainDelegate::InitializeResourceBundle() {
 #if BUILDFLAG(IS_ANDROID)
-#if 0 //BUILDFLAG(ANATIVE_BUILD)
+#if 0  // BUILDFLAG(ANATIVE_BUILD)
   base::FilePath pak_file;
   pak_file = pak_file.Append(FILE_PATH_LITERAL("content_shell.pak"));
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 #else
-      //base::FilePath pak_file;
-      //bool r = base::PathService::Get(base::DIR_ASSETS, &pak_file);
-      //LOG(ERROR) << "base::DIR_ANDROID_APP_DATA : -----> " << base::DIR_ANDROID_APP_DATA << "\t" << pak_file;
+  // base::FilePath pak_file;
+  // bool r = base::PathService::Get(base::DIR_ASSETS, &pak_file);
+  // LOG(ERROR) << "base::DIR_ANDROID_APP_DATA : -----> " <<
+  // base::DIR_ANDROID_APP_DATA << "\t" << pak_file;
   // On Android, the renderer runs with a different UID and can never access
   // the file system. Use the file descriptor passed in at launch time.
   auto* global_descriptors = base::GlobalDescriptors::GetInstance();
@@ -404,7 +403,8 @@ void ShellMainDelegate::InitializeResourceBundle() {
       base::FilePath pak_file;
       bool r = base::PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file);
       DCHECK(r);
-      LOG(ERROR) << "base::DIR_ANDROID_APP_DATA : -----> " << base::DIR_ANDROID_APP_DATA << "\t" << pak_file;
+      LOG(ERROR) << "base::DIR_ANDROID_APP_DATA : -----> "
+                 << base::DIR_ANDROID_APP_DATA << "\t" << pak_file;
       CHECK(false);
       pak_file = pak_file.Append(FILE_PATH_LITERAL("paks"));
       pak_file = pak_file.Append(FILE_PATH_LITERAL("content_shell.pak"));

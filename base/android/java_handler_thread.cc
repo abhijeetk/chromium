@@ -23,11 +23,8 @@
 
 using base::android::AttachCurrentThread;
 
-<<<<<<< HEAD
 // TODO(IGALIA)): Eliminate global variables and implement a more robust
 // solution.
-=======
->>>>>>> 819c3835bd17c (Integrated GPU process launch)
 base::android::JavaHandlerThread* class_ptr = nullptr;
 long event = 0;
 

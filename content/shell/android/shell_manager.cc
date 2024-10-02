@@ -8,13 +8,14 @@
 #include "base/android/jni_string.h"
 #include "base/android/scoped_java_ref.h"
 #include "base/functional/bind.h"
+#include "base/lazy_instance.h"
 #include "content/public/browser/web_contents.h"
 #include "content/shell/android/content_shell_jni_headers/ShellManager_jni.h"
 #include "content/shell/browser/shell.h"
 #include "content/shell/browser/shell_browser_context.h"
 #include "content/shell/browser/shell_content_browser_client.h"
-#include "url/gurl.h"
 #include "ui/android/window_android.h"
+#include "url/gurl.h"
 
 #if BUILDFLAG(ANATIVE_BUILD)
 #include "base/android/android_app_state.h"
@@ -30,13 +31,19 @@ using base::android::JavaParamRef;
 using base::android::JavaRef;
 using base::android::ScopedJavaLocalRef;
 
-namespace ANativeGlobal {
+namespace {
 
-// For ANative build, extern declaration for access in other files
-__attribute__((visibility("default"))) base::LazyInstance<GlobalState>::DestructorAtExit g_global_state =
+struct GlobalState {
+  GlobalState() {}
+  base::android::ScopedJavaGlobalRef<jobject> j_shell_manager;
+#if BUILDFLAG(ANATIVE_BUILD)
+  RAW_PTR_EXCLUSION content::ShellManager* g_shell_manager;
+#endif
+};
+base::LazyInstance<GlobalState>::DestructorAtExit g_global_state =
     LAZY_INSTANCE_INITIALIZER;
 
-}  // namespace ANativeGlobal
+}  // namespace
 
 namespace content {
 
@@ -53,17 +60,21 @@ ScopedJavaLocalRef<jobject> CreateShellView(Shell* shell) {
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
   return Java_ShellManager_createShell(env,
-                                       ANativeGlobal::g_global_state.Get().j_shell_manager,
+                                       g_global_state.Get().j_shell_manager,
                                        reinterpret_cast<intptr_t>(shell));
 #endif
 }
 
 void RemoveShellView(const JavaRef<jobject>& shell_view) {
 #if BUILDFLAG(ANATIVE_BUILD)
+<<<<<<< HEAD
 // TODO(IGALIA) : Implement me.
+=======
+// TODO
+>>>>>>> 47d09a0844b09 (Fixed unwated crashes)
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
-  Java_ShellManager_removeShell(env, ANativeGlobal::g_global_state.Get().j_shell_manager,
+  Java_ShellManager_removeShell(env, g_global_state.Get().j_shell_manager,
                                 shell_view);
 #endif
 }
@@ -71,7 +82,11 @@ void RemoveShellView(const JavaRef<jobject>& shell_view) {
 static void JNI_ShellManager_Init(JNIEnv* env,
                                   const JavaParamRef<jobject>& obj) {
 #if BUILDFLAG(ANATIVE_BUILD)
+<<<<<<< HEAD
 // TODO(IGALIA) : Implement me.
+=======
+// TODO
+>>>>>>> 47d09a0844b09 (Fixed unwated crashes)
 #else
   g_global_state.Get().j_shell_manager.Reset(obj);
 #endif
@@ -88,7 +103,11 @@ void JNI_ShellManager_LaunchShell(JNIEnv* env,
 
 void DestroyShellManager() {
 #if BUILDFLAG(ANATIVE_BUILD)
+<<<<<<< HEAD
 // TODO(IGALIA) : Implement me.
+=======
+// TODO
+>>>>>>> 47d09a0844b09 (Fixed unwated crashes)
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_ShellManager_destroy(env, g_global_state.Get().j_shell_manager);

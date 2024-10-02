@@ -11,7 +11,6 @@
 #include "build/blink_buildflags.h"
 #include "base/android/jni_android.h"
 #include "base/android/scoped_java_ref.h"
-#include "base/lazy_instance.h"
 
 class Shell;
 
@@ -22,35 +21,11 @@ class Shell;
 namespace embedder_support {
 class ContentViewRenderView;
 }
-<<<<<<< HEAD
-=======
 
-<<<<<<< HEAD
->>>>>>> 5a259a88032d4 (Fixed issues)
-=======
 namespace content {
   class ShellManager;
 }
->>>>>>> 2e1106acfe7f9 (TEST)
 #endif
-
-extern "C" {
-namespace ANativeGlobal {
-
-struct GlobalState {
-  GlobalState() {}
-#if BUILDFLAG(ANATIVE_BUILD)
-  RAW_PTR_EXCLUSION content::ShellManager* g_shell_manager;
-#else
-  base::android::ScopedJavaGlobalRef<jobject> j_shell_manager;
-#endif
-};
-
-// For ANative build, extern declaration for access in other files
-extern base::LazyInstance<GlobalState>::DestructorAtExit g_global_state;
-
-}  // namespace ANativeGlobal
-}
 
 namespace cc {
 class Layer;
