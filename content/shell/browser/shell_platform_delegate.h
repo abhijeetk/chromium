@@ -123,7 +123,7 @@ class ShellPlatformDelegate {
                               scoped_refptr<FileSelectListener> listener,
                               const blink::mojom::FileChooserParams& params);
 
-#if BUILDFLAG(IS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
   // Returns the native window. Valid after calling CreatePlatformWindow().
   virtual gfx::NativeWindow GetNativeWindow(Shell* shell);
 #endif

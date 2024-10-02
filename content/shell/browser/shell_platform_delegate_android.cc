@@ -88,7 +88,6 @@ void ShellPlatformDelegate::CleanUp(Shell* shell) {
 }
 
 void ShellPlatformDelegate::SetContents(Shell* shell) {
-<<<<<<< HEAD
 #if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
@@ -96,30 +95,7 @@ void ShellPlatformDelegate::SetContents(Shell* shell) {
   Java_Shell_initFromNativeTabContents(
       env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
 #else
-<<<<<<< HEAD
   // TODO(IGALIA): Implement me.
-=======
-=======
-  // base::debug::StackTrace().Print();
-  DCHECK(base::Contains(shell_data_map_, shell));
-  ShellData& shell_data = shell_data_map_[shell];
-
-#if !BUILDFLAG(ANATIVE_BUILD)
-  JNIEnv* env = AttachCurrentThread();
-  Java_Shell_initFromNativeTabContents(
-      env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
-#else
-  CHECK(false);
->>>>>>> 2e1106acfe7f9 (TEST)
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__
-             << "\tshell_data.window : " << shell_data.window
-             << "\tANativeWindow_getWidth : "
-             << ANativeWindow_getWidth(shell_data.window)
-             << "\tANativeWindow_getHeight : "
-             << ANativeWindow_getHeight(shell_data.window)
-             << "\tANativeWindow_getFormat : "
-             << ANativeWindow_getFormat(shell_data.window);
->>>>>>> 5a259a88032d4 (Fixed issues)
 #endif
 }
 

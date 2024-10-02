@@ -67,11 +67,7 @@ ScopedJavaLocalRef<jobject> CreateShellView(Shell* shell) {
 
 void RemoveShellView(const JavaRef<jobject>& shell_view) {
 #if BUILDFLAG(ANATIVE_BUILD)
-<<<<<<< HEAD
 // TODO(IGALIA) : Implement me.
-=======
-// TODO
->>>>>>> 47d09a0844b09 (Fixed unwated crashes)
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_ShellManager_removeShell(env, g_global_state.Get().j_shell_manager,
@@ -82,11 +78,7 @@ void RemoveShellView(const JavaRef<jobject>& shell_view) {
 static void JNI_ShellManager_Init(JNIEnv* env,
                                   const JavaParamRef<jobject>& obj) {
 #if BUILDFLAG(ANATIVE_BUILD)
-<<<<<<< HEAD
 // TODO(IGALIA) : Implement me.
-=======
-// TODO
->>>>>>> 47d09a0844b09 (Fixed unwated crashes)
 #else
   g_global_state.Get().j_shell_manager.Reset(obj);
 #endif
@@ -103,11 +95,7 @@ void JNI_ShellManager_LaunchShell(JNIEnv* env,
 
 void DestroyShellManager() {
 #if BUILDFLAG(ANATIVE_BUILD)
-<<<<<<< HEAD
 // TODO(IGALIA) : Implement me.
-=======
-// TODO
->>>>>>> 47d09a0844b09 (Fixed unwated crashes)
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_ShellManager_destroy(env, g_global_state.Get().j_shell_manager);
