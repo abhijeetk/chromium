@@ -18,51 +18,6 @@
 #include "content/public/common/content_client.h"
 #include "content/shell/app/shell_main_delegate.h"
 
-// START : TEST
-#include "base/files/memory_mapped_file.h"
-// This function opens an asset and maps it into memory.
-int OpenApkAsset(AAssetManager* asset_manager,
-                 const std::string& file_path,
-                 const std::string& split_name,
-                 base::MemoryMappedFile::Region* region) {
-  // Open the asset
-  AAsset* asset =
-      AAssetManager_open(asset_manager, file_path.c_str(), AASSET_MODE_UNKNOWN);
-  if (!asset) {
-    LOG(ERROR) << "AssetManager : Failed to open asset: " << file_path.c_str();
-    return -1;  // Failed to open the asset
-  }
-
-  // Get the asset size
-  long asset_size = AAsset_getLength(asset);
-  if (asset_size <= 0) {
-    AAsset_close(asset);
-    LOG(ERROR) << "AssetManager : Asset size is invalid: " << file_path.c_str();
-    return -1;
-  }
-
-  // Get the file descriptor and its associated offset/size
-  long asset_offset = 0;
-
-  // Map the asset into memory (we don't have direct file descriptors, so just
-  // use the asset)
-  int fd = AAsset_openFileDescriptor(asset, &asset_offset, &asset_size);
-  if (fd < 0) {
-    LOG(ERROR) << "AssetManager : Failed to get file descriptor for asset: "
-               << file_path.c_str();
-    AAsset_close(asset);
-    return -1;
-  }
-
-  // Assign values to region
-  region->offset = static_cast<off_t>(asset_offset);
-  region->size = static_cast<size_t>(asset_size);
-
-  AAsset_close(asset);
-  return fd;  // Return the file descriptor of the asset
-}
-// END : TEST
-
 namespace content {
 namespace {
 
@@ -74,52 +29,72 @@ ContentMainRunner* GetContentMainRunner() {
 }  // namespace
 }  // namespace content
 
+// Tear down the display and application.
+static void term_display() {}
+
+// Process the next input event.
+static int32_t handle_input(android_app* app, AInputEvent* event) {
+  return 0;
+}
+
+// Process the next main command.
+static void handle_cmd(android_app* app, int32_t cmd) {
+  switch (cmd) {
+    case APP_CMD_SAVE_STATE:
+      LOG(ERROR) << "IGALIA : APP_CMD_SAVE_STATE";
+      break;
+    case APP_CMD_INIT_WINDOW:
+      LOG(ERROR) << "IGALIA : APP_CMD_INIT_WINDOW";
+      // The window is being shown, get it ready.
+
+      if (app->window != nullptr) {
+        base::android::InitVM(app->activity->vm);
+        if (!content::android::OnJNIOnLoadInit()) {
+          return;
+        }
+
+        content::ContentMainDelegate* delegate =
+            new content::ShellMainDelegate();
+        content::SetContentMainDelegate(delegate);
+
+        static const char* const kInitialArgv[] = {"MativeActivity"};
+        base::CommandLine::Init(std::size(kInitialArgv), kInitialArgv);
+
+        // Java: BrowserStartupControllerJavaImpl::prepareToStartBrowserProcess
+        //       - BrowserStartupControllerImplJni.get().setCommandLineFlags
+        content::SetContentCommandLineFlags(/*singleProcess=*/false);
+
+        content::ContentMainParams params(delegate);
+        params.minimal_browser_mode = false;
+
+        content::RunContentProcess(std::move(params),
+                                   content::GetContentMainRunner());
+      }
+      break;
+    case APP_CMD_TERM_WINDOW:
+      LOG(ERROR) << "IGALIA : APP_CMD_TERM_WINDOW";
+      break;
+    case APP_CMD_GAINED_FOCUS:
+      LOG(ERROR) << "IGALIA : APP_CMD_GAINED_FOCUS";
+      break;
+    case APP_CMD_LOST_FOCUS:
+      LOG(ERROR) << "IGALIA : APP_CMD_LOST_FOCUS";
+      break;
+    case APP_CMD_WINDOW_RESIZED:
+      LOG(ERROR) << "IGALIA : APP_CMD_WINDOW_RESIZED";
+      break;
+    default:
+      break;
+  }
+}
+
 void android_main(android_app* state) {
+  // Update the app state in base/android/android_app_state.h
   g_native_app_state = state;
 
-  LOG(ERROR) << "externalDataPath : " << state->activity->externalDataPath;
-  LOG(ERROR) << "internalDataPath : " << state->activity->internalDataPath;
-  LOG(ERROR) << "assetManager : " << state->activity->assetManager;
-  LOG(ERROR) << "env : " << state->activity->env;
-  LOG(ERROR) << "vm : " << state->activity->vm;
-  LOG(ERROR) << "sdkVersion : " << state->activity->sdkVersion;
-
-#if 0
-  AAssetManager* asset_manager = state->activity->assetManager;
-  base::MemoryMappedFile::Region region;
-  int fd = OpenApkAsset(asset_manager, "content_shell.pak", "", &region);
-
-  if (fd >= 0) {
-      // You can now memory-map the asset or perform operations on it using the file descriptor.
-      LOG(ERROR) << "File opened : ";
-      close(fd);
-  }
-
-  return;
-#endif
-
-  base::android::InitVM(state->activity->vm);
-
-  if (!content::android::OnJNIOnLoadInit()) {
-    return;
-  }
-
-  content::ContentMainDelegate* delegate = new content::ShellMainDelegate();
-  content::SetContentMainDelegate(delegate);
-
-  static const char* const kInitialArgv[] = {"MativeActivity"};
-  base::CommandLine::Init(std::size(kInitialArgv), kInitialArgv);
-
-  // Java: BrowserStartupControllerJavaImpl::prepareToStartBrowserProcess
-  //       - BrowserStartupControllerImplJni.get().setCommandLineFlags
-  content::SetContentCommandLineFlags(/*singleProcess=*/false);
-
-  content::ContentMainParams params(delegate);
-  params.minimal_browser_mode = false;
-
-  content::RunContentProcess(std::move(params),
-                             content::GetContentMainRunner());
-
+  state->onAppCmd = handle_cmd;
+  state->onInputEvent = handle_input;
+  
   while (!state->destroyRequested) {
     // Our input, sensor, and update/render logic is all driven by callbacks, so
     // we don't need to use the non-blocking poll.
@@ -129,6 +104,11 @@ void android_main(android_app* state) {
     if (result == ALOOPER_POLL_ERROR) {
       LOG(ERROR) << "ALooper_pollOnce returned an error";
     }
+
+    if (source != nullptr) {
+      source->process(state, source);
+    }
   }
+
+  term_display();
 }
-// END_INCLUDE(all)
