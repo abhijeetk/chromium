@@ -13,6 +13,7 @@
 
 namespace content {
 class Compositor;
+class WebContents;
 }  // namespace content
 
 namespace embedder_support {
@@ -52,6 +53,9 @@ class ContentViewRenderView : public content::CompositorClient {
                            const base::android::JavaParamRef<jobject>& obj,
                            bool enabled);
 
+  // Method for Android Native implementation
+  void SetCurrentWebContents(content::WebContents* web_contents);
+ 
   // CompositorClient implementation
   void UpdateLayerTreeHost() override;
   void DidSwapFrame(int pending_frames) override;

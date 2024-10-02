@@ -64,6 +64,13 @@ void ContentViewRenderView::SetCurrentWebContents(
                                 : scoped_refptr<cc::slim::Layer>());
 }
 
+void ContentViewRenderView::SetCurrentWebContents(content::WebContents* web_contents) {
+  InitCompositor();
+  compositor_->SetRootLayer(web_contents
+                                ? web_contents->GetNativeView()->GetLayer()
+                                : scoped_refptr<cc::slim::Layer>());
+}
+
 void ContentViewRenderView::OnPhysicalBackingSizeChanged(
     JNIEnv* env,
     const JavaParamRef<jobject>& obj,

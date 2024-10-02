@@ -20,6 +20,10 @@
 #include "content/shell/android/shell_manager.h"
 #include "content/shell/browser/shell.h"
 
+#if BUILDFLAG(ANATIVE_BUILD)
+#include "base/android/android_app_state.h"
+#endif
+
 using base::android::AttachCurrentThread;
 using base::android::ConvertUTF8ToJavaString;
 using base::android::JavaParamRef;
@@ -29,6 +33,7 @@ namespace content {
 
 struct ShellPlatformDelegate::ShellData {
   base::android::ScopedJavaGlobalRef<jobject> java_object;
+  RAW_PTR_EXCLUSION ANativeWindow* window;
 };
 
 struct ShellPlatformDelegate::PlatformData {};
@@ -36,8 +41,16 @@ struct ShellPlatformDelegate::PlatformData {};
 ShellPlatformDelegate::ShellPlatformDelegate() = default;
 
 void ShellPlatformDelegate::Initialize(const gfx::Size& default_window_size) {
-  // |platform_| is not used on this platform.
 }
+
+#if !BUILDFLAG(IS_ANDROID)
+gfx::NativeWindow ShellPlatformDelegate::GetNativeWindow(Shell* shell) {
+  DCHECK(base::Contains(shell_data_map_, shell));
+  ShellData& shell_data = shell_data_map_[shell];
+
+  return gfx::NativeWindow(shell_data.window);
+}
+#endif
 
 ShellPlatformDelegate::~ShellPlatformDelegate() {
   DestroyShellManager();
@@ -49,7 +62,8 @@ void ShellPlatformDelegate::CreatePlatformWindow(
   DCHECK(!base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
 #if BUILDFLAG(ANATIVE_BUILD)
-  shell_data.java_object.Reset(nullptr);
+  shell_data.window = g_native_app_state->window;
+  shell_data.java_object.Reset(CreateShellView(shell));
 #else
   shell_data.java_object.Reset(CreateShellView(shell));
 #endif
@@ -69,12 +83,16 @@ void ShellPlatformDelegate::CleanUp(Shell* shell) {
 }
 
 void ShellPlatformDelegate::SetContents(Shell* shell) {
-  JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
 
+#if !BUILDFLAG(ANATIVE_BUILD)
+  JNIEnv* env = AttachCurrentThread();
   Java_Shell_initFromNativeTabContents(
       env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
+#else
+  // TODO(IGALIA): Implement me.
+#endif
 }
 
 void ShellPlatformDelegate::ResizeWebContent(Shell* shell,
