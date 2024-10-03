@@ -19,6 +19,7 @@
 #include "ui/android/window_android_observer.h"
 #include "ui/base/ui_base_features.h"
 #include "ui/gfx/display_color_spaces.h"
+#include "build/blink_buildflags.h"
 
 namespace ui {
 
@@ -138,9 +139,13 @@ float WindowAndroid::GetRefreshRate() {
 }
 
 gfx::OverlayTransform WindowAndroid::GetOverlayTransform() {
+#if BUILDFLAG(ANATIVE_BUILD)
+  return gfx::OverlayTransform::OVERLAY_TRANSFORM_NONE;
+#else
   JNIEnv* env = AttachCurrentThread();
   return static_cast<gfx::OverlayTransform>(
       Java_WindowAndroid_getOverlayTransform(env, GetJavaObject()));
+#endif
 }
 
 std::vector<float> WindowAndroid::GetSupportedRefreshRates() {

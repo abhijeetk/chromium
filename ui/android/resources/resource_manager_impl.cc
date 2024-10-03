@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/blink_buildflags.h"
 #include "base/android/jni_array.h"
 #include "base/android/jni_string.h"
 #include "base/memory/ptr_util.h"
@@ -67,12 +68,16 @@ ResourceManagerImpl* ResourceManagerImpl::FromJavaObject(
 
 ResourceManagerImpl::ResourceManagerImpl(gfx::NativeWindow native_window)
     : ui_resource_manager_(nullptr) {
+#if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = base::android::AttachCurrentThread();
   java_obj_.Reset(
       env, Java_ResourceManager_create(env, native_window->GetJavaObject(),
                                        reinterpret_cast<intptr_t>(this))
                .obj());
   DCHECK(!java_obj_.is_null());
+#else
+  // TODO(IGALIA) : Implement me.
+#endif
   base::trace_event::MemoryDumpManager::GetInstance()->RegisterDumpProvider(
       this, "android::ResourceManagerImpl",
       base::SingleThreadTaskRunner::GetCurrentDefault());

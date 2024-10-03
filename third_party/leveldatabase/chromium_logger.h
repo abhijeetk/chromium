@@ -16,6 +16,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/threading/platform_thread.h"
 #include "base/time/time.h"
+#include "build/blink_buildflags.h"
 #include "third_party/leveldatabase/src/include/leveldb/env.h"
 
 namespace leveldb {
@@ -27,13 +28,22 @@ class ChromiumLogger : public Logger {
   ~ChromiumLogger() override = default;
 
   void Logv(const char* format, va_list arguments) override {
+    // TODO(IGALIA): This is a temporary workaround to allow the code to run.
+    // A proper fix is needed for the issue described below, as we suspect there
+    // may be a problem with the pak file loading process.
     std::string str = base::StrCat(
-        {base::UnlocalizedTimeFormatWithPattern(base::Time::Now(),
+#if BUILDFLAG(ANATIVE_BUILD)
+        {
+          "IGALIA",
+#else
+       {base::UnlocalizedTimeFormatWithPattern(base::Time::Now(),
                                                 "yyyy/MM/dd-HH:mm:ss.SSS"),
-         base::StringPrintf(
-             " %" PRIx64 " ",
-             static_cast<uint64_t>(base::PlatformThread::CurrentId())),
-         base::StringPrintV(format, arguments)});
+#endif
+              base::StringPrintf(
+                  " %" PRIx64 " ",
+                  static_cast<uint64_t>(base::PlatformThread::CurrentId())),
+              base::StringPrintV(format, arguments)
+        });
     if (str.back() != '\n') {
       str.push_back('\n');
     }
