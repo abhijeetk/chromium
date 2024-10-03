@@ -40,8 +40,8 @@ int OpenApkAsset(const std::string& file_path_input,
 
   AAssetManager* asset_manager = g_native_app_state->activity->assetManager;
   // Open the asset
-  AAsset* asset =
-      AAssetManager_open(asset_manager, file_path.c_str(), AASSET_MODE_UNKNOWN);
+  AAsset* asset = AAssetManager_open(asset_manager, file_path.c_str(),
+                                     AASSET_MODE_STREAMING);
   if (!asset) {
     LOG(ERROR) << "AssetManager : Failed to open asset: " << file_path.c_str();
     return -1;  // Failed to open the asset

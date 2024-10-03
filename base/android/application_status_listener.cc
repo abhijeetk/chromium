@@ -109,8 +109,16 @@ void ApplicationStatusListener::NotifyApplicationStateChange(
 
 // static
 ApplicationState ApplicationStatusListener::GetState() {
+#if !BUILDFLAG(ANATIVE_BUILD)
   return static_cast<ApplicationState>(
       Java_ApplicationStatus_getStateForApplication(AttachCurrentThread()));
+#else
+  // TODO(IGALIA): Infer the app's state from lifecycle events (e.g.,
+  // APP_CMD_RESUME, APP_CMD_PAUSE). For now, as a temporary workaround, we are
+  // returning the running state.
+  return static_cast<ApplicationState>(
+      APPLICATION_STATE_HAS_RUNNING_ACTIVITIES);
+#endif
 }
 
 static void JNI_ApplicationStatus_OnApplicationStateChange(

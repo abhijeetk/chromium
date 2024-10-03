@@ -83,11 +83,10 @@ void ShellPlatformDelegate::CleanUp(Shell* shell) {
 }
 
 void ShellPlatformDelegate::SetContents(Shell* shell) {
-  DCHECK(base::Contains(shell_data_map_, shell));
-  ShellData& shell_data = shell_data_map_[shell];
-
 #if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
+  DCHECK(base::Contains(shell_data_map_, shell));
+  ShellData& shell_data = shell_data_map_[shell];
   Java_Shell_initFromNativeTabContents(
       env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
 #else
