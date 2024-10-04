@@ -156,7 +156,7 @@ component("gl") {
   include_dirs = [ "//third_party/mesa_headers" ]
 
   if (is_android && anative_build) {
-    include_dirs += [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+    include_dirs += [ "//third_party/angle/util/android/third_party" ]
   }
 
   all_dependent_configs = [ ":gl_config" ]
