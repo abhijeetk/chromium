@@ -1593,7 +1593,7 @@ component("platform") {
       include_dirs = []
     }
 
-    include_dirs += [ "../../third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+    include_dirs += [ "../../third_party/angle/util/android/third_party" ]
   }
 
   sources -= blink_platform_avx_files

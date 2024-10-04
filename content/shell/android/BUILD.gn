@@ -230,9 +230,9 @@ if (anative_build) {
 
   # Include the static library for native app glue.
   static_library("android_native_app_glue_anative") {
-    sources = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue/android_native_app_glue.c" ]
+    sources = [ "//third_party/angle/util/android/third_party/android_native_app_glue.c" ]
 
-    include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+    include_dirs = [ "//third_party/angle/util/android/third_party" ]
   }
 
   # Define the shared library for the native code.
@@ -242,7 +242,7 @@ if (anative_build) {
 
     sources = [ "main.cc" ]
 
-    include_dirs = [ "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue" ]
+    include_dirs = [ "//third_party/angle/util/android/third_party" ]
 
     # On Android, to export all symbols from a shared library, we need to remove symbol hiding.
     configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
