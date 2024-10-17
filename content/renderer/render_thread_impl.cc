@@ -282,6 +282,7 @@ scoped_refptr<viz::ContextProviderCommandBuffer> CreateOffscreenContext(
     viz::command_buffer_metrics::ContextType type,
     int32_t stream_id,
     gpu::SchedulingPriority stream_priority) {
+        LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   DCHECK(gpu_channel_host);
   // This is used to create a few different offscreen contexts:
   // - The shared main thread context, used by blink for 2D Canvas.
@@ -314,10 +315,12 @@ void CreateSingleSampleMetricsProvider(
     mojo::SharedRemote<mojom::ChildProcessHost> process_host,
     mojo::PendingReceiver<metrics::mojom::SingleSampleMetricsProvider>
         receiver) {
+            LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   process_host->BindHostReceiver(std::move(receiver));
 }
 
 static bool IsSingleProcess() {
+    LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   return base::CommandLine::ForCurrentProcess()->HasSwitch(
       switches::kSingleProcess);
 }
@@ -333,6 +336,7 @@ RenderThreadImpl::HistogramCustomizer::~HistogramCustomizer() {}
 void RenderThreadImpl::HistogramCustomizer::RenderViewNavigatedToHost(
     const std::string& host,
     size_t view_count) {
+        LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
           switches::kDisableHistogramCustomizer)) {
     return;
@@ -350,6 +354,7 @@ void RenderThreadImpl::HistogramCustomizer::RenderViewNavigatedToHost(
 
 std::string RenderThreadImpl::HistogramCustomizer::ConvertToCustomHistogramName(
     const char* histogram_name) const {
+        LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   std::string name(histogram_name);
   if (!common_host_histogram_suffix_.empty() &&
       base::Contains(custom_histograms_, name)) {
@@ -360,6 +365,7 @@ std::string RenderThreadImpl::HistogramCustomizer::ConvertToCustomHistogramName(
 
 void RenderThreadImpl::HistogramCustomizer::SetCommonHost(
     const std::string& host) {
+        LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   if (host != common_host_) {
     common_host_ = host;
     common_host_histogram_suffix_ = HostToCustomHistogramSuffix(host);
@@ -453,6 +459,7 @@ RenderThreadImpl::RenderThreadImpl(
       main_thread_scheduler_(std::move(scheduler)),
       client_id_(client_id) {
   TRACE_EVENT0("startup", "RenderThreadImpl::Create");
+    LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   Init();
 }
 

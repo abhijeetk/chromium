@@ -24,9 +24,11 @@ DeviceFormFactor GetDeviceFormFactor() {
     return DEVICE_FORM_FACTOR_AUTOMOTIVE;
   }
 
+#if 0
   if (Java_DeviceFormFactor_isTablet(base::android::AttachCurrentThread())) {
     return DEVICE_FORM_FACTOR_TABLET;
   }
+#endif
 
   return DEVICE_FORM_FACTOR_PHONE;
 }

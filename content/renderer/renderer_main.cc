@@ -143,6 +143,8 @@ void LogTimeToStartRunLoop(const base::CommandLine& command_line,
 
 // mainline routine for running as the Renderer process
 int RendererMain(MainFunctionParams parameters) {
+  LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
+  //base::debug::StackTrace().Print();
   // Don't use the TRACE_EVENT0 macro because the tracing infrastructure doesn't
   // expect synchronous events around the main loop of a thread.
   TRACE_EVENT_INSTANT0("startup", "RendererMain", TRACE_EVENT_SCOPE_THREAD);

@@ -17,7 +17,8 @@ void Animation::UpdatePrefersReducedMotion() {
   // TODO(crbug.com/927163): DCHECK this assertion once tests are well-behaved.
 
   JNIEnv* env = AttachCurrentThread();
-  prefers_reduced_motion_ = Java_Animation_prefersReducedMotion(env);
+  //prefers_reduced_motion_ = Java_Animation_prefersReducedMotion(env);
+  prefers_reduced_motion_ = false;
 }
 
 }  // namespace gfx

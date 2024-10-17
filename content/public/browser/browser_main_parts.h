@@ -158,6 +158,10 @@ class CONTENT_EXPORT BrowserMainParts {
   virtual void OnFirstIdle() {}
   virtual void PostMainMessageLoopRun() {}
   virtual void PostDestroyThreads() {}
+
+//#if BUILDFLAG(ANATIVE_BUILD)
+  virtual void StartupCompleted() {}
+//#endif
 };
 
 }  // namespace content

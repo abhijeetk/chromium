@@ -409,6 +409,7 @@ bool AudioManagerAndroid::HasNoAudioInputStreams() {
 
 const JavaRef<jobject>& AudioManagerAndroid::GetJavaAudioManager() {
   DCHECK(GetTaskRunner()->BelongsToCurrentThread());
+#if 0
   if (j_audio_manager_.is_null()) {
     // Create the Android audio manager on the audio thread.
     DVLOG(2) << "Creating Java part of the audio manager";
@@ -422,6 +423,8 @@ const JavaRef<jobject>& AudioManagerAndroid::GetJavaAudioManager() {
                                   j_audio_manager_);
   }
   return j_audio_manager_;
+#endif
+  return nullptr;
 }
 
 void AudioManagerAndroid::SetCommunicationAudioModeOn(bool on) {

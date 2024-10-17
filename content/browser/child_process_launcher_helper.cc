@@ -412,7 +412,7 @@ void ChildProcessLauncherHelper::PassLoggingSwitches(
 
 // static
 base::SingleThreadTaskRunner* GetProcessLauncherTaskRunner() {
-#if BUILDFLAG(IS_ANDROID)
+#if !BUILDFLAG(ANATIVE_BUILD) && BUILDFLAG(IS_ANDROID)
   // Android specializes Launcher thread so it is accessible in java.
   // Note Android never does clean shutdown, so shutdown use-after-free
   // concerns are not a problem in practice.

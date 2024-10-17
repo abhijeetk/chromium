@@ -69,7 +69,7 @@ class ShellManager {
   embedder_support::ContentViewRenderView* getContentViewRenderView() const;
   Shell* getActiveShell() const;
 
-  void launchShell(const std::string& url);
+  //void launch(const std::string& url);
   Shell* createShell(long nativeShellPtr);
   void showShell(Shell* shellView);
   void removeShell(Shell* shellView);

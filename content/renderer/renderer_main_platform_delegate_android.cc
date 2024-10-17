@@ -22,18 +22,24 @@
 namespace content {
 
 RendererMainPlatformDelegate::RendererMainPlatformDelegate(
-    const MainFunctionParams& parameters) {}
+    const MainFunctionParams& parameters) {
+        LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
+    }
 
 RendererMainPlatformDelegate::~RendererMainPlatformDelegate() {
+    LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
 }
 
 void RendererMainPlatformDelegate::PlatformInitialize() {
+    LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
 }
 
 void RendererMainPlatformDelegate::PlatformUninitialize() {
+    LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
 }
 
 bool RendererMainPlatformDelegate::EnableSandbox() {
+    LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
   TRACE_EVENT0("startup", "RendererMainPlatformDelegate::EnableSandbox");
   auto* info = base::android::BuildInfo::GetInstance();
   sandbox::SeccompStarterAndroid starter(info->sdk_int());

@@ -88,6 +88,9 @@ void ShellPlatformDelegate::CleanUp(Shell* shell) {
 }
 
 void ShellPlatformDelegate::SetContents(Shell* shell) {
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  //base::debug::StackTrace().Print();
+
 #if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
@@ -96,6 +99,8 @@ void ShellPlatformDelegate::SetContents(Shell* shell) {
       env, shell_data.java_object, shell->web_contents()->GetJavaWebContents());
 #else
   // TODO(IGALIA): Implement me.
+  auto* webcontent = shell->web_contents();
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__ << webcontent;
 #endif
 }
 
@@ -108,7 +113,7 @@ void ShellPlatformDelegate::ResizeWebContent(Shell* shell,
 void ShellPlatformDelegate::EnableUIControl(Shell* shell,
                                             UIControl control,
                                             bool is_enabled) {
-  // LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
@@ -129,12 +134,12 @@ void ShellPlatformDelegate::SetAddressBarURL(Shell* shell, const GURL& url) {
 }
 
 void ShellPlatformDelegate::SetIsLoading(Shell* shell, bool loading) {
-  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__ << "\tloading : " << loading;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
 
-  Java_Shell_setIsLoading(env, shell_data.java_object, loading);
+  //Java_Shell_setIsLoading(env, shell_data.java_object, loading);
 }
 
 void ShellPlatformDelegate::SetTitle(Shell* shell,
@@ -144,7 +149,7 @@ void ShellPlatformDelegate::SetTitle(Shell* shell,
 
 void ShellPlatformDelegate::MainFrameCreated(Shell* shell) {
   LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
-  base::debug::StackTrace().Print();
+  //base::debug::StackTrace().Print();
 }
 
 bool ShellPlatformDelegate::DestroyShell(Shell* shell) {
@@ -168,12 +173,12 @@ void ShellPlatformDelegate::ToggleFullscreenModeForTab(
 bool ShellPlatformDelegate::IsFullscreenForTabOrPending(
     Shell* shell,
     const WebContents* web_contents) const {
-  // LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
+  LOG(ERROR) << "ABHIJEET : " << __FUNCTION__;
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   const ShellData& shell_data = shell_data_map_.find(shell)->second;
 
-  return Java_Shell_isFullscreenForTabOrPending(env, shell_data.java_object);
+  return false; //Java_Shell_isFullscreenForTabOrPending(env, shell_data.java_object);
 }
 
 void ShellPlatformDelegate::SetOverlayMode(Shell* shell,
@@ -193,7 +198,7 @@ void ShellPlatformDelegate::LoadProgressChanged(Shell* shell, double progress) {
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
 
-  Java_Shell_onLoadProgressChanged(env, shell_data.java_object, progress);
+  //Java_Shell_onLoadProgressChanged(env, shell_data.java_object, progress);
 }
 
 // static

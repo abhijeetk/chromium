@@ -292,6 +292,7 @@ public class BrowserStartupControllerImpl implements BrowserStartupController {
 
     /** Start the browser process by calling ContentMain.start(). */
     int contentStart() {
+        Log.d("ABHIJEET contentStart: ", Log.getStackTraceString(new Exception()));
         int result = 0;
         if (mContentMainCallbackForTests == null) {
             boolean startMinimalBrowser =

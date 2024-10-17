@@ -1141,6 +1141,7 @@ int NO_STACK_PROTECTOR ContentMainRunnerImpl::Run() {
 
   RegisterMainThreadFactories();
 
+  LOG(ERROR) << "ABHIJEET : Btowser : process_type : " << process_type; 
   if (process_type.empty())
     return RunBrowser(std::move(main_params), start_minimal_browser);
 

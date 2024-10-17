@@ -7,6 +7,7 @@
 #include "base/android/jni_array.h"
 #include "base/check_op.h"
 #include "ui/base/ui_base_jni_headers/TouchDevice_jni.h"
+#include "base/logging.h"
 
 using jni_zero::AttachCurrentThread;
 
@@ -17,17 +18,26 @@ TouchScreensAvailability GetTouchScreensAvailability() {
 }
 
 int MaxTouchPoints() {
-  return Java_TouchDevice_maxTouchPoints(AttachCurrentThread());
+#if 0
+  int touch_points = Java_TouchDevice_maxTouchPoints(AttachCurrentThread());
+  LOG(ERROR) << "IGALIA : touch_points " << touch_points;
+#endif
+  return 5; //Java_TouchDevice_maxTouchPoints(AttachCurrentThread());
 }
 
 std::pair<int, int> AvailablePointerAndHoverTypes() {
+#if 0 //BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
   std::vector<int> pointer_and_hover_types;
   base::android::JavaIntArrayToIntVector(
       env, Java_TouchDevice_availablePointerAndHoverTypes(env),
       &pointer_and_hover_types);
   DCHECK_EQ(pointer_and_hover_types.size(), 2u);
+  LOG(ERROR) << "pointer_and_hover_types[0] : " << pointer_and_hover_types[0] << "\tpointer_and_hover_types[1] : " << pointer_and_hover_types[1];
   return std::make_pair(pointer_and_hover_types[0], pointer_and_hover_types[1]);
+#else
+  return std::make_pair(6, 2);
+#endif
 }
 
 int GetAvailableHoverTypes() {

@@ -107,10 +107,11 @@ Shell::~Shell() {
 Shell* Shell::CreateShell(std::unique_ptr<WebContents> web_contents,
                           const gfx::Size& initial_size,
                           bool should_set_delegate) {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   WebContents* raw_web_contents = web_contents.get();
   Shell* shell = new Shell(std::move(web_contents), should_set_delegate);
   g_platform->CreatePlatformWindow(shell, initial_size);
-
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   // Note: Do not make RenderFrameHost or RenderViewHost specific state changes
   // here, because they will be forgotten after a cross-process navigation. Use
   // RenderFrameCreated or RenderViewCreated instead.
@@ -118,16 +119,18 @@ Shell* Shell::CreateShell(std::unique_ptr<WebContents> web_contents,
     raw_web_contents->GetMutableRendererPrefs()->use_custom_colors = false;
     raw_web_contents->SyncRendererPrefs();
   }
-
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kForceWebRtcIPHandlingPolicy)) {
     raw_web_contents->GetMutableRendererPrefs()->webrtc_ip_handling_policy =
         command_line->GetSwitchValueASCII(
             switches::kForceWebRtcIPHandlingPolicy);
   }
-
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   g_platform->SetContents(shell);
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   g_platform->DidCreateOrAttachWebContents(shell, raw_web_contents);
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   // If the RenderFrame was created during WebContents construction (as happens
   // for windows opened from the renderer) then the Shell won't hear about the
   // main frame being created as a WebContentsObservers. This gives the delegate
@@ -135,6 +138,7 @@ Shell* Shell::CreateShell(std::unique_ptr<WebContents> web_contents,
   if (raw_web_contents->GetPrimaryMainFrame()->IsRenderFrameLive())
     g_platform->MainFrameCreated(shell);
 
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   return shell;
 }
 
@@ -623,6 +627,7 @@ void Shell::RendererUnresponsive(
     RenderWidgetHost* render_widget_host,
     base::RepeatingClosure hang_monitor_restarter) {
   LOG(WARNING) << "renderer unresponsive";
+  base::debug::StackTrace().Print();
 }
 
 void Shell::ActivateContents(WebContents* contents) {

@@ -16,6 +16,8 @@ RenderProcess::RenderProcess(
     std::unique_ptr<base::ThreadPoolInstance::InitParams>
         thread_pool_init_params)
     : ChildProcess(base::ThreadType::kCompositing,
-                   std::move(thread_pool_init_params)) {}
+                   std::move(thread_pool_init_params)) {
+                      LOG(ERROR) << "ABHIJEET : RENDERER" << __FUNCTION__;
+                   }
 
 }  // namespace content

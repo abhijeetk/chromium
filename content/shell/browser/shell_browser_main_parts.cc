@@ -121,6 +121,7 @@ ShellBrowserMainParts::ShellBrowserMainParts() = default;
 ShellBrowserMainParts::~ShellBrowserMainParts() = default;
 
 void ShellBrowserMainParts::PostCreateMainMessageLoop() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
 #if BUILDFLAG(IS_CHROMEOS_ASH)
   ash::DBusThreadManager::Initialize();
 #elif BUILDFLAG(IS_CHROMEOS_LACROS)
@@ -139,6 +140,7 @@ void ShellBrowserMainParts::PostCreateMainMessageLoop() {
 }
 
 int ShellBrowserMainParts::PreEarlyInitialization() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
 #if BUILDFLAG(ANATIVE_BUILD)
   LOG(ERROR) << "TODO(IGALIA)) : Implement " << __FUNCTION__
              << " for Android Native build";
@@ -155,6 +157,7 @@ int ShellBrowserMainParts::PreEarlyInitialization() {
 }
 
 void ShellBrowserMainParts::InitializeBrowserContexts() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   set_browser_context(new ShellBrowserContext(false));
   set_off_the_record_browser_context(new ShellBrowserContext(true));
   // Persistent Origin Trials needs to be instantiated as soon as possible
@@ -165,11 +168,13 @@ void ShellBrowserMainParts::InitializeBrowserContexts() {
 }
 
 void ShellBrowserMainParts::InitializeMessageLoopContext() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   Shell::CreateNewWindow(browser_context_.get(), GetStartupURL(), nullptr,
                          gfx::Size());
 }
 
 void ShellBrowserMainParts::ToolkitInitialized() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   if (switches::IsRunWebTestsSwitchPresent())
     return;
 
@@ -179,6 +184,7 @@ void ShellBrowserMainParts::ToolkitInitialized() {
 }
 
 int ShellBrowserMainParts::PreCreateThreads() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
 #if BUILDFLAG(IS_ANDROID)
   const base::CommandLine* command_line =
       base::CommandLine::ForCurrentProcess();
@@ -192,12 +198,14 @@ int ShellBrowserMainParts::PreCreateThreads() {
 }
 
 void ShellBrowserMainParts::PostCreateThreads() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   performance_manager_lifetime_ =
       std::make_unique<performance_manager::PerformanceManagerLifetime>(
           performance_manager::GraphFeatures::WithMinimal(), base::DoNothing());
 }
 
 int ShellBrowserMainParts::PreMainMessageLoopRun() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
 #if BUILDFLAG(IS_FUCHSIA)
   fuchsia_view_presenter_ = std::make_unique<FuchsiaViewPresenter>();
 #endif
@@ -212,10 +220,12 @@ int ShellBrowserMainParts::PreMainMessageLoopRun() {
 
 void ShellBrowserMainParts::WillRunMainMessageLoop(
     std::unique_ptr<base::RunLoop>& run_loop) {
+        LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   Shell::SetMainMessageLoopQuitClosure(run_loop->QuitClosure());
 }
 
 void ShellBrowserMainParts::PostMainMessageLoopRun() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   DCHECK_EQ(Shell::windows().size(), 0u);
   ShellDevToolsManagerDelegate::StopHttpHandler();
   browser_context_.reset();
@@ -230,6 +240,7 @@ void ShellBrowserMainParts::PostMainMessageLoopRun() {
 }
 
 void ShellBrowserMainParts::PostDestroyThreads() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
 #if BUILDFLAG(IS_CHROMEOS)
   device::BluetoothAdapterFactory::Shutdown();
   if (floss::features::IsFlossEnabled()) {
@@ -249,8 +260,17 @@ void ShellBrowserMainParts::PostDestroyThreads() {
 #endif
 }
 
+#if BUILDFLAG(ANATIVE_BUILD)
+void ShellBrowserMainParts::StartupCompleted() {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__;
+  Shell::CreateNewWindow(browser_context_.get(), GURL("https://www.igalia.com"), nullptr,
+                         gfx::Size());
+}
+#endif
+
 std::unique_ptr<ShellPlatformDelegate>
 ShellBrowserMainParts::CreateShellPlatformDelegate() {
+    LOG(ERROR) << "IGALIA : " << __FUNCTION__;
   return std::make_unique<ShellPlatformDelegate>();
 }
 

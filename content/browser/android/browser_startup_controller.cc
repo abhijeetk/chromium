@@ -17,17 +17,17 @@ using base::android::JavaParamRef;
 namespace content {
 
 void BrowserStartupComplete(int result) {
-
-#if !BUILDFLAG(ANATIVE_BUILD)
   LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__
-             << " for Android Native build : g_global_state : ";
+             << " for Android Native build : result : " << result;
+  //base::debug::StackTrace().Print();
+#if !BUILDFLAG(ANATIVE_BUILD)
   //ANativeGlobal::g_global_state.Get().j_shell_manager.Reset(nullptr);
   JNIEnv* env = base::android::AttachCurrentThread();
   Java_BrowserStartupControllerImpl_browserStartupComplete(env, result);
 #else
+  //launchNativeShell("https://www.igalia.com");
   //LOG(ERROR) << "TODO(abhijeet) : Implement " << __FUNCTION__
   //           << " for Android Native build : g_global_state : " << ANativeGlobal::g_global_state.Get().g_shell_manager;
-              CHECK(false);
 #endif
 }
 

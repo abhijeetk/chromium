@@ -1965,7 +1965,7 @@ NavigationRequest::NavigationRequest(
 
   begin_params_->headers = headers.ToString();
 
-#if BUILDFLAG(IS_ANDROID)
+#if !BUILDFLAG(ANATIVE_BUILD) && BUILDFLAG(IS_ANDROID)
   RenderWidgetHostImpl* host = RenderWidgetHostImpl::From(
       frame_tree_node_->current_frame_host()->GetRenderWidgetHost());
   if (NeedsUrlLoader() && IsInPrimaryMainFrame() && host &&
@@ -2992,7 +2992,7 @@ void NavigationRequest::StartNavigation() {
   }
 
   navigation_visible_to_embedder_ = true;
-#if BUILDFLAG(IS_ANDROID)
+#if !BUILDFLAG(ANATIVE_BUILD) && BUILDFLAG(IS_ANDROID)
   // Once the navigation has started, fill in the details in the Java side
   // navigation handle.
   navigation_handle_proxy_->DidStart();

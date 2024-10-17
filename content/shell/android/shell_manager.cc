@@ -40,7 +40,8 @@ struct GlobalState {
   RAW_PTR_EXCLUSION content::ShellManager* g_shell_manager;
 #endif
 };
-base::LazyInstance<GlobalState>::DestructorAtExit g_global_state =
+
+ base::LazyInstance<GlobalState>::DestructorAtExit g_global_state =
     LAZY_INSTANCE_INITIALIZER;
 
 }  // namespace
@@ -49,6 +50,7 @@ namespace content {
 
 ScopedJavaLocalRef<jobject> CreateShellView(Shell* shell) {
 #if BUILDFLAG(ANATIVE_BUILD)
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__ << "\t";
   gfx::NativeWindow window = new ui::WindowAndroid(
       /*env=*/nullptr, /*obj=*/nullptr, /*sdk_display_id=*/0,
       /*scroll_factor=*/180, /*window_is_wide_color_gamut=*/0);
@@ -57,6 +59,8 @@ ScopedJavaLocalRef<jobject> CreateShellView(Shell* shell) {
       new ShellManager(window, nullptr, shell);
   auto* shell_manager = g_global_state.Get().g_shell_manager;
   shell_manager->createShell(0);
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__ << "\t";
+  return nullptr;
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
   return Java_ShellManager_createShell(env,
@@ -92,6 +96,14 @@ void JNI_ShellManager_LaunchShell(JNIEnv* env,
   GURL url(base::android::ConvertJavaStringToUTF8(env, jurl));
   Shell::CreateNewWindow(browserContext, url, nullptr, gfx::Size());
 }
+
+/*
+void launchNativeShell(const std::string& url) {
+  ShellBrowserContext* browserContext =
+      ShellContentBrowserClient::Get()->browser_context();
+  Shell::CreateNewWindow(browserContext, url, nullptr, gfx::Size());
+}
+*/
 
 void DestroyShellManager() {
 #if BUILDFLAG(ANATIVE_BUILD)
@@ -137,10 +149,11 @@ Shell* ShellManager::getActiveShell() const {
   return mActiveShell;
 }
 
-void ShellManager::launchShell(const std::string& url) {
-}
+//void ShellManager::launch(const std::string& url) {
+//}
 
 Shell* ShellManager::createShell(long nativeShellPtr) {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__ << "\t" << mContentViewRenderView;
   if (!mContentViewRenderView) {
     mContentViewRenderView =
         new embedder_support::ContentViewRenderView(nullptr, nullptr, mWindow);
@@ -156,6 +169,7 @@ Shell* ShellManager::createShell(long nativeShellPtr) {
 }
 
 void ShellManager::showShell(Shell* shellView) {
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__ << "\t" << mContentViewRenderView;
   mActiveShell = shellView;
 
   // Simulating web contents behavior
@@ -165,6 +179,7 @@ void ShellManager::showShell(Shell* shellView) {
     mContentViewRenderView->SetCurrentWebContents(webContents);
     webContents->WasShown();
   }
+  LOG(ERROR) << "IGALIA : " << __FUNCTION__ << "\t" << mContentViewRenderView;
 }
 
 void ShellManager::removeShell(Shell* shellView) {

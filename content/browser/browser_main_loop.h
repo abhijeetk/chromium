@@ -104,6 +104,8 @@ class Watcher;
 class ScreenOrientationDelegate;
 #endif
 
+void StartupCompleted(int result);
+
 // Implements the main browser loop stages called from BrowserMainRunner.
 // See comments in browser_main_parts.h for additional info.
 class CONTENT_EXPORT BrowserMainLoop {

@@ -56,10 +56,15 @@ class ShellBrowserMainParts : public BrowserMainParts {
       std::unique_ptr<base::RunLoop>& run_loop) override;
   void PostMainMessageLoopRun() override;
   void PostDestroyThreads() override;
+#if BUILDFLAG(ANATIVE_BUILD)
+  void StartupCompleted() override;
+#endif
+
 #if BUILDFLAG(IS_IOS)
   device::GeolocationSystemPermissionManager*
   GetGeolocationSystemPermissionManager();
 #endif
+
 
   ShellBrowserContext* browser_context() { return browser_context_.get(); }
   ShellBrowserContext* off_the_record_browser_context() {

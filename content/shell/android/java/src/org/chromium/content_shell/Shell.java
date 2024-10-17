@@ -87,12 +87,12 @@ public class Shell extends LinearLayout {
     /** Constructor for inflating via XML. */
     public Shell(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        //////Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
     }
 
     /** Set the SurfaceView being rendered to as soon as it is available. */
     public void setContentViewRenderView(ContentViewRenderView contentViewRenderView) {
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        ////Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         FrameLayout contentViewHolder = (FrameLayout) findViewById(R.id.contentview_holder);
         if (contentViewRenderView == null) {
             if (mContentViewRenderView != null) {
@@ -115,7 +115,7 @@ public class Shell extends LinearLayout {
      * @param window The owning window for this shell.
      */
     public void initialize(long nativeShell, WindowAndroid window) {
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        ////Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         mNativeShell = nativeShell;
         mWindow = window;
     }
@@ -213,7 +213,7 @@ public class Shell extends LinearLayout {
      * @param url The URL to be loaded by the shell.
      */
     public void loadUrl(String url) {
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        ////Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         if (url == null) return;
 
         if (TextUtils.equals(url, mWebContents.getLastCommittedUrl().getSpec())) {
@@ -313,7 +313,7 @@ public class Shell extends LinearLayout {
     @SuppressWarnings("unused")
     @CalledByNative
     private void initFromNativeTabContents(WebContents webContents) {
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        ////Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         Context context = getContext();
         ContentView cv =
                 ContentView.createContentView(context, /* eventOffsetHandler= */ null, webContents);
@@ -417,7 +417,7 @@ public class Shell extends LinearLayout {
      * @return The {@link View} currently shown by this Shell.
      */
     public View getContentView() {
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        ////Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         ViewAndroidDelegate viewDelegate = mWebContents.getViewAndroidDelegate();
         return viewDelegate != null ? viewDelegate.getContainerView() : null;
     }
@@ -426,7 +426,7 @@ public class Shell extends LinearLayout {
      * @return The {@link WebContents} currently managing the content shown by this Shell.
      */
     public WebContents getWebContents() {
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        ////Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
         return mWebContents;
     }
 

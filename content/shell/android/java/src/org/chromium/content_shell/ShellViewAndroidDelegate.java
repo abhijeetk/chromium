@@ -32,7 +32,7 @@ public class ShellViewAndroidDelegate extends ViewAndroidDelegate {
 
     public ShellViewAndroidDelegate(ViewGroup containerView) {
         super(containerView);
-        Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
+        //Log.d("ABHIJEET : ", Log.getStackTraceString(new Exception()));
     }
 
     public void setOnCursorUpdateHelper(OnCursorUpdateHelper helper) {
