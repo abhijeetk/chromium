@@ -16,6 +16,7 @@
 #include "base/task/thread_pool/thread_pool_instance.h"
 #include "base/types/strong_alias.h"
 #include "build/build_config.h"
+#include "build/blink_buildflags.h"
 #include "build/chromeos_buildflags.h"
 #include "content/browser/browser_process_io_thread.h"
 #include "content/common/content_export.h"
@@ -102,6 +103,10 @@ class Watcher;
 
 #if BUILDFLAG(IS_ANDROID)
 class ScreenOrientationDelegate;
+#endif
+
+#if BUILDFLAG(ANATIVE_BUILD)
+void StartupCompleted(int result);
 #endif
 
 // Implements the main browser loop stages called from BrowserMainRunner.

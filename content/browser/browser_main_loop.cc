@@ -871,9 +871,15 @@ void BrowserMainLoop::CreateStartupTasks() {
   if (!g_post_startup_tasks)
     return;
 
+#if BUILDFLAG(ANATIVE_BUILD)
+  startup_task_runner_ = std::make_unique<StartupTaskRunner>(
+      base::BindOnce(&StartupCompleted),
+      GetUIThreadTaskRunner({BrowserTaskType::kDefault}));
+#else
   startup_task_runner_ = std::make_unique<StartupTaskRunner>(
       base::BindOnce(&BrowserStartupComplete),
       GetUIThreadTaskRunner({BrowserTaskType::kDefault}));
+#endif
 #else
   startup_task_runner_ = std::make_unique<StartupTaskRunner>(
       base::OnceCallback<void(int)>(),
@@ -1064,6 +1070,15 @@ int BrowserMainLoop::PreMainMessageLoopRun() {
   responsiveness_watcher_->SetUp();
   return result_code_;
 }
+
+#if BUILDFLAG(ANATIVE_BUILD)
+void StartupCompleted(int result) {
+  auto* parts = BrowserMainLoop::GetInstance()->parts();
+  if (parts) {
+    parts->StartupCompleted();
+  }
+}
+#endif
 
 BrowserMainLoop::ProceedWithMainMessageLoopRun
 BrowserMainLoop::InterceptMainMessageLoopRun() {

@@ -10,6 +10,7 @@
 #include "base/functional/callback.h"
 #include "base/types/strong_alias.h"
 #include "content/common/content_export.h"
+#include "build/blink_buildflags.h"
 
 namespace base {
 class RunLoop;
@@ -158,6 +159,10 @@ class CONTENT_EXPORT BrowserMainParts {
   virtual void OnFirstIdle() {}
   virtual void PostMainMessageLoopRun() {}
   virtual void PostDestroyThreads() {}
+
+#if BUILDFLAG(ANATIVE_BUILD)
+  virtual void StartupCompleted() {}
+#endif
 };
 
 }  // namespace content

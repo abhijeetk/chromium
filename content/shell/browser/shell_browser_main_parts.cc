@@ -249,6 +249,13 @@ void ShellBrowserMainParts::PostDestroyThreads() {
 #endif
 }
 
+#if BUILDFLAG(ANATIVE_BUILD)
+void ShellBrowserMainParts::StartupCompleted() {
+  Shell::CreateNewWindow(browser_context_.get(), GURL("https://www.igalia.com"),
+                         nullptr, gfx::Size());
+}
+#endif
+
 std::unique_ptr<ShellPlatformDelegate>
 ShellBrowserMainParts::CreateShellPlatformDelegate() {
   return std::make_unique<ShellPlatformDelegate>();
