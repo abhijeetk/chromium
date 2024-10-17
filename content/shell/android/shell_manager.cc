@@ -52,6 +52,7 @@ ScopedJavaLocalRef<jobject> CreateShellView(Shell* shell) {
       new ShellManager(window, nullptr, shell);
   auto* shell_manager = g_global_state.Get().g_shell_manager;
   shell_manager->createShell(0);
+  return nullptr;
 #else
   JNIEnv* env = base::android::AttachCurrentThread();
   return Java_ShellManager_createShell(env,

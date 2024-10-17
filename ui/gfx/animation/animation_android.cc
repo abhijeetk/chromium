@@ -6,6 +6,7 @@
 
 #include "base/android/jni_android.h"
 #include "ui/gfx/gfx_jni_headers/Animation_jni.h"
+#include "build/blink_buildflags.h"
 
 using base::android::AttachCurrentThread;
 
@@ -15,9 +16,12 @@ namespace gfx {
 void Animation::UpdatePrefersReducedMotion() {
   // prefers_reduced_motion_ should only be modified on the UI thread.
   // TODO(crbug.com/927163): DCHECK this assertion once tests are well-behaved.
-
+#if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
   prefers_reduced_motion_ = Java_Animation_prefersReducedMotion(env);
+#else
+  prefers_reduced_motion_ = false;
+#endif
 }
 
 }  // namespace gfx

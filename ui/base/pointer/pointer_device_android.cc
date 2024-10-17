@@ -7,6 +7,7 @@
 #include "base/android/jni_array.h"
 #include "base/check_op.h"
 #include "ui/base/ui_base_jni_headers/TouchDevice_jni.h"
+#include "build/blink_buildflags.h"
 
 using jni_zero::AttachCurrentThread;
 
@@ -17,10 +18,15 @@ TouchScreensAvailability GetTouchScreensAvailability() {
 }
 
 int MaxTouchPoints() {
+#if !BUILDFLAG(ANATIVE_BUILD)
   return Java_TouchDevice_maxTouchPoints(AttachCurrentThread());
+#else
+  return 5;
+#endif
 }
 
 std::pair<int, int> AvailablePointerAndHoverTypes() {
+#if !BUILDFLAG(ANATIVE_BUILD)
   JNIEnv* env = AttachCurrentThread();
   std::vector<int> pointer_and_hover_types;
   base::android::JavaIntArrayToIntVector(
@@ -28,6 +34,9 @@ std::pair<int, int> AvailablePointerAndHoverTypes() {
       &pointer_and_hover_types);
   DCHECK_EQ(pointer_and_hover_types.size(), 2u);
   return std::make_pair(pointer_and_hover_types[0], pointer_and_hover_types[1]);
+#else
+  return std::make_pair(6, 2);
+#endif
 }
 
 int GetAvailableHoverTypes() {

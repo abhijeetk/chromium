@@ -124,8 +124,9 @@ void ShellPlatformDelegate::SetIsLoading(Shell* shell, bool loading) {
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
-
+#if !BUILDFLAG(ANATIVE_BUILD)
   Java_Shell_setIsLoading(env, shell_data.java_object, loading);
+#endif
 }
 
 void ShellPlatformDelegate::SetTitle(Shell* shell,
@@ -156,7 +157,11 @@ bool ShellPlatformDelegate::IsFullscreenForTabOrPending(
   DCHECK(base::Contains(shell_data_map_, shell));
   const ShellData& shell_data = shell_data_map_.find(shell)->second;
 
+#if !BUILDFLAG(ANATIVE_BUILD)
   return Java_Shell_isFullscreenForTabOrPending(env, shell_data.java_object);
+#else
+  return false;
+#endif
 }
 
 void ShellPlatformDelegate::SetOverlayMode(Shell* shell,
@@ -173,8 +178,9 @@ void ShellPlatformDelegate::LoadProgressChanged(Shell* shell, double progress) {
   JNIEnv* env = AttachCurrentThread();
   DCHECK(base::Contains(shell_data_map_, shell));
   ShellData& shell_data = shell_data_map_[shell];
-
+#if !BUILDFLAG(ANATIVE_BUILD)
   Java_Shell_onLoadProgressChanged(env, shell_data.java_object, progress);
+#endif
 }
 
 // static

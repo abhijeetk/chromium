@@ -7,6 +7,7 @@
 #include "base/android/build_info.h"
 #include "base/android/jni_android.h"
 #include "ui/base/ui_base_jni_headers/DeviceFormFactor_jni.h"
+#include "build/blink_buildflags.h"
 
 namespace ui {
 
@@ -24,9 +25,11 @@ DeviceFormFactor GetDeviceFormFactor() {
     return DEVICE_FORM_FACTOR_AUTOMOTIVE;
   }
 
+#if !BUILDFLAG(ANATIVE_BUILD)
   if (Java_DeviceFormFactor_isTablet(base::android::AttachCurrentThread())) {
     return DEVICE_FORM_FACTOR_TABLET;
   }
+#endif
 
   return DEVICE_FORM_FACTOR_PHONE;
 }

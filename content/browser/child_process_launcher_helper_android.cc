@@ -126,6 +126,7 @@ ChildProcessLauncherHelper::LaunchProcessOnLauncherThread(
   JNIEnv* env = AttachCurrentThread();
   DCHECK(env);
 
+#if !BUILDFLAG(ANATIVE_BUILD)
   // Create the Command line String[]
   ScopedJavaLocalRef<jobjectArray> j_argv =
       ToJavaArrayOfStrings(env, command_line()->argv());
@@ -160,7 +161,9 @@ ChildProcessLauncherHelper::LaunchProcessOnLauncherThread(
   java_peer_.Reset(Java_ChildProcessLauncherHelperImpl_createAndStart(
       env, reinterpret_cast<intptr_t>(this), j_argv, j_file_infos,
       can_use_warm_up_connection));
-
+#else
+  // TODO(Igalia) : Implement solution for android native build.
+#endif
   client_task_runner_->PostTask(
       FROM_HERE,
       base::BindOnce(
