@@ -224,7 +224,7 @@ if (anative_build) {
 
   jinja_template("content_shell_manifest_anative") {
     testonly = true
-    input = "shell_apk/AndroidManifestAbhijeet.xml.jinja2"
+    input = "shell_apk/AndroidNativeManifest.xml.jinja2"
     output = content_shell_manifest_anative
   }
 
