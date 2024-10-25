@@ -229,11 +229,11 @@ content_shell_apk_tmpl("content_shell_apk") {
 # Include the static library for native app glue.
 static_library("android_native_app_glue_abhijeet") {
   sources = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue/android_native_app_glue.c",
+    "//third_party/angle/util/android/third_party/android_native_app_glue.c",
   ]
 
   include_dirs = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
+    "//third_party/angle/util/android/third_party",
   ]
 }
 
@@ -245,7 +245,7 @@ shared_library("native_activity") {
   ]
 
   include_dirs = [
-    "//third_party/android_sdk/public/ndk/27.0.12077973/sources/android/native_app_glue",
+    "//third_party/angle/util/android/third_party",
   ]
 
   configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
