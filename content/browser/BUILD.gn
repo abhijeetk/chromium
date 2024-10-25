@@ -2387,9 +2387,14 @@ source_set("browser") {
       "sandbox_host_linux.h",
       "sandbox_ipc_linux.cc",
       "sandbox_ipc_linux.h",
-      "zygote_host/zygote_host_impl_linux.cc",
-      "zygote_host/zygote_host_impl_linux.h",
     ]
+
+    if (use_zygote) {
+      sources += [
+        "zygote_host/zygote_host_impl_linux.cc",
+        "zygote_host/zygote_host_impl_linux.h",
+      ]
+    }
 
     public_deps += [ "//components/services/font/public/mojom" ]
 
@@ -3201,6 +3206,9 @@ source_set("browser") {
       if (anative_build) {
         include_dirs += [ "//third_party/angle/util/android/third_party" ]
       }
+
+      sources -= [ "child_process_launcher_helper_android.cc",]
+      sources += [ "child_process_launcher_helper_linux.cc",]
     }
 
     deps += [

@@ -8,6 +8,12 @@
 #include "content/common/content_export.h"
 #include "content/public/common/zygote/zygote_handle.h"
 
+#if !BUILDFLAG(USE_ZYGOTE)
+#define DEBUG_INCLUDE(msg) _Pragma (#msg)
+DEBUG_INCLUDE(message "Included from: " __FILE__)
+#error "Triggered error in file: " __FILE__
+#endif
+
 namespace content {
 
 using ZygoteLaunchCallback =

@@ -805,6 +805,7 @@ int ContentMainRunnerImpl::TerminateForFatalInitializationError() {
 }
 
 int ContentMainRunnerImpl::Initialize(ContentMainParams params) {
+ 
   // ContentMainDelegate is used by this class, not forwarded to embedders.
   delegate_ = std::exchange(params.delegate, nullptr);
   content_main_params_.emplace(std::move(params));
@@ -884,6 +885,8 @@ int ContentMainRunnerImpl::Initialize(ContentMainParams params) {
       *base::CommandLine::ForCurrentProcess();
   std::string process_type =
       command_line.GetSwitchValueASCII(switches::kProcessType);
+
+  LOG(ERROR) << "GetCommandLineString() -------> : " << command_line.GetCommandLineString();
 
   base::allocator::PartitionAllocSupport::Get()->ReconfigureEarlyish(
       process_type);

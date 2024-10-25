@@ -12,8 +12,14 @@
 #include "content/common/content_export.h"
 #include "content/public/common/zygote/zygote_buildflags.h"
 
+#if BUILDFLAG(IS_POSIX)
+//#error "posix system"
+#else
+//#error "Not posix system"
+#endif
+
 #if !BUILDFLAG(USE_ZYGOTE)
-#error "Can not use zygote without USE_ZYGOTE"
+
 #endif
 
 namespace content {

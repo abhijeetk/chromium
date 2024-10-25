@@ -25,6 +25,10 @@
 #include <memory>
 #include <set>
 
+#include "base/base_switches.h"
+//#include "content/public/common/content_switches.h"
+#include "content/shell/common/shell_switches.h"
+#include "base/process/current_process.h"
 #include "base/command_line.h"
 #include "base/compiler_specific.h"
 #include "base/debug/debugger.h"
@@ -278,6 +282,15 @@ Process LaunchProcess(const CommandLine& cmdline,
 
 Process LaunchProcess(const std::vector<std::string>& argv,
                       const LaunchOptions& options) {
+  //std::string process_name = base::CurrentProcess::GetInstance().GetName({});
+  //  std::string process_type =
+  //      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+  //          switches::kProcessType);
+  for (auto s : argv) {
+    LOG(ERROR) << s;
+  }
+  LOG(ERROR) << __FUNCTION__;// << "\t process_name : " << process_type;
+  //base::debug::StackTrace().Print();
   TRACE_EVENT0("base", "LaunchProcess");
 
   InjectiveMultimap fd_shuffle1;
@@ -305,9 +318,11 @@ Process LaunchProcess(const std::vector<std::string>& argv,
 
   const char* current_directory = nullptr;
   if (!options.current_directory.empty()) {
+    LOG(ERROR) << "<-------- Shoud not come here ---->";
     current_directory = options.current_directory.value().c_str();
   }
 
+  LOG(ERROR) << __FUNCTION__;
   pid_t pid;
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS) || BUILDFLAG(IS_AIX)
   if (options.clone_flags) {
@@ -330,21 +345,24 @@ Process LaunchProcess(const std::vector<std::string>& argv,
   } else
 #endif
   {
+   LOG(ERROR) << __FUNCTION__ << "\t forking now";
     pid = fork();
   }
-
+  //DPLOG(ERROR) << __FUNCTION__ << "\t pid " << pid;
+  fprintf(stderr, "pid :  %d\n", pid);
   // Always restore the original signal mask in the parent.
   if (pid != 0) {
     SetSignalMask(orig_sigmask);
   }
 
   if (pid < 0) {
+    fprintf(stderr, "fork :  %d\n", pid);
     DPLOG(ERROR) << "fork";
     return Process();
   }
   if (pid == 0) {
     // Child process
-
+    fprintf(stderr, "Child process :  %d\n", pid);
     // DANGER: no calls to malloc or locks are allowed from now on:
     // http://crbug.com/36678
 
@@ -490,6 +508,10 @@ Process LaunchProcess(const std::vector<std::string>& argv,
     const char* executable_path = !options.real_path.empty() ?
         options.real_path.value().c_str() : argv_cstr[0];
 
+    fprintf(stderr, "executable_path :  %s\t\n", executable_path);
+    for(auto s : argv_cstr)
+      fprintf(stderr, "executable_path :  %s\n", s);
+
     execvp(executable_path, argv_cstr.data());
 
     RAW_LOG(ERROR, "LaunchProcess: failed to execvp:");
@@ -497,6 +519,7 @@ Process LaunchProcess(const std::vector<std::string>& argv,
     _exit(127);
   } else {
     // Parent process
+      fprintf(stderr, "Parent process :  %d\n", pid);
     if (options.wait) {
       // While this isn't strictly disk IO, waiting for another process to
       // finish is the sort of thing ThreadRestrictions is trying to prevent.

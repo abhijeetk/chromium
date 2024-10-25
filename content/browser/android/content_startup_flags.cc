@@ -14,6 +14,7 @@
 #include "gpu/command_buffer/service/gpu_switches.h"
 #include "third_party/blink/public/common/switches.h"
 #include "ui/base/ui_base_switches.h"
+#include "sandbox/policy/switches.h"
 
 namespace content {
 
@@ -50,6 +51,8 @@ void SetContentCommandLineFlags(bool single_process) {
   // on such systems.
   // if (base::SysInfo::IsLowEndDevice())
   parsed_command_line->AppendSwitch(switches::kInProcessGPU);
+  parsed_command_line->AppendSwitch(switches::kNoZygote);
+  parsed_command_line->AppendSwitch(sandbox::policy::switches::kNoSandbox);
 
   // Disable anti-aliasing.
   parsed_command_line->AppendSwitch(

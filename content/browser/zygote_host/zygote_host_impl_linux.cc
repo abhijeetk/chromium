@@ -16,16 +16,29 @@
 #include "base/strings/string_number_conversions.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
+#include "content/public/common/zygote/zygote_buildflags.h"
+<<<<<<< HEAD
+#if BUILDFLAG(USE_ZYGOTE)
 #include "content/common/zygote/zygote_commands_linux.h"
 #include "content/common/zygote/zygote_communication_linux.h"
 #include "content/common/zygote/zygote_handle_impl_linux.h"
 #include "content/public/common/zygote/zygote_handle.h"
+#endif
+=======
+>>>>>>> 8134902a61b9a (Disable Zygote cleanup)
 #include "sandbox/linux/services/credentials.h"
 #include "sandbox/linux/services/namespace_sandbox.h"
 #include "sandbox/linux/suid/client/setuid_sandbox_host.h"
 #include "sandbox/linux/suid/common/sandbox.h"
 #include "sandbox/policy/linux/sandbox_linux.h"
 #include "sandbox/policy/switches.h"
+
+#if BUILDFLAG(USE_ZYGOTE)
+#include "content/common/zygote/zygote_commands_linux.h"
+#include "content/common/zygote/zygote_communication_linux.h"
+#include "content/common/zygote/zygote_handle_impl_linux.h"
+#include "content/public/common/zygote/zygote_handle.h"
+#endif
 
 #if BUILDFLAG(IS_CHROMEOS)
 #include "content/common/zygote/zygote_communication_linux.h"
